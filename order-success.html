@@ -274,38 +274,31 @@
             const orderId = urlParams.get('orderId');
             
             if (orderId) {
-                const user = auth.currentUser;
-                if (user) {
-                    database.ref('orders/' + user.uid + '/' + orderId).once('value')
-                        .then((snapshot) => {
-                            const order = snapshot.val();
-                            if (order) {
-                                document.getElementById('orderId').textContent = orderId;
-                                document.getElementById('orderTotal').textContent = `₹${order.total.toFixed(2)}`;
-                                document.getElementById('paymentMethod').textContent = order.paymentMethod;
-                                
-                                // Format date
-                                const orderDate = new Date(order.createdAt);
-                                document.getElementById('orderDate').textContent = orderDate.toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                });
-                            }
-                        });
-                }
+                database.ref('orders/' + orderId).once('value')
+                    .then((snapshot) => {
+                        const order = snapshot.val();
+                        if (order) {
+                            document.getElementById('orderId').textContent = orderId.substring(0, 8);
+                            document.getElementById('orderTotal').textContent = `₹${order.total.toLocaleString('en-IN')}`;
+                            document.getElementById('paymentMethod').textContent = order.paymentMethod;
+                            
+                            // Format date
+                            const orderDate = new Date(order.createdAt);
+                            document.getElementById('orderDate').textContent = orderDate.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                        }
+                    });
             }
         }
         
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    loadOrderDetails();
-                } else {
-                    window.location.href = 'login.html';
-                }
-            });
+            loadOrderDetails();
         });
     </script>
 </body>
