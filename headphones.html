@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Same styles as main.html product section */
         :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
@@ -29,7 +28,7 @@
         body {
             background-color: #f5f5f5;
             color: #333;
-            padding-bottom: 60px;
+            padding-bottom: 80px;
         }
         
         .header {
@@ -58,8 +57,75 @@
             font-weight: 600;
         }
         
+        .category-banner {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .category-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .category-banner-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .category-banner h2 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .category-banner p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .filter-bar {
+            padding: 15px 20px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .filter-btn i {
+            margin-right: 5px;
+        }
+        
+        .sort-select {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+        
         .products {
-            padding: 20px;
+            padding: 15px;
         }
         
         .product-grid {
@@ -153,6 +219,21 @@
             margin-right: 5px;
         }
         
+        .product-features {
+            margin-top: 5px;
+            font-size: 0.7rem;
+            color: var(--gray);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .feature-tag {
+            background: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
         .footer-nav {
             position: fixed;
             bottom: 0;
@@ -185,6 +266,34 @@
         .nav-item.active {
             color: var(--primary);
         }
+        
+        /* Loading spinner */
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loader i {
+            font-size: 2rem;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (min-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .category-banner {
+                height: 200px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -196,9 +305,32 @@
         <div></div> <!-- Empty div for alignment -->
     </div>
     
+    <div class="category-banner" id="categoryBanner">
+        <div class="category-banner-content">
+            <h2>Premium Headphones</h2>
+            <p>Experience crystal clear sound quality</p>
+        </div>
+    </div>
+    
+    <div class="filter-bar">
+        <button class="filter-btn">
+            <i class="fas fa-filter"></i> Filters
+        </button>
+        <select class="sort-select" id="sortSelect">
+            <option value="popular">Sort by: Popular</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Rating</option>
+            <option value="discount">Discount</option>
+        </select>
+    </div>
+    
     <div class="products">
         <div class="product-grid" id="productGrid">
-            <!-- Headphones products will be loaded here -->
+            <!-- Products will be loaded here from Firebase -->
+        </div>
+        <div class="loader" id="loader">
+            <i class="fas fa-spinner"></i>
         </div>
     </div>
     
@@ -251,6 +383,9 @@
         
         // DOM Elements
         const productGrid = document.getElementById('productGrid');
+        const loader = document.getElementById('loader');
+        const categoryBanner = document.getElementById('categoryBanner');
+        const sortSelect = document.getElementById('sortSelect');
         
         // Navigation elements
         const footerHome = document.getElementById('footerHome');
@@ -259,55 +394,103 @@
         const footerWishlist = document.getElementById('footerWishlist');
         const footerAccount = document.getElementById('footerAccount');
         
+        // Global variables
+        let products = [];
+        
         // Check authentication and load products
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = 'login.html';
             } else {
-                loadHeadphones();
+                loadCategoryData();
+                loadProducts();
             }
         });
         
-        // Load headphones from Firebase
-        function loadHeadphones() {
+        // Load category data (banner image, etc.)
+        function loadCategoryData() {
+            database.ref('categories/headphones').once('value')
+                .then((snapshot) => {
+                    const categoryData = snapshot.val();
+                    if (categoryData && categoryData.image) {
+                        categoryBanner.style.backgroundImage = `url(${categoryData.image})`;
+                    }
+                });
+        }
+        
+        // Load products from Firebase
+        function loadProducts() {
+            loader.style.display = 'block';
+            productGrid.innerHTML = '';
+            
             database.ref('products').orderByChild('category').equalTo('headphones').once('value')
                 .then((snapshot) => {
-                    productGrid.innerHTML = '';
+                    products = [];
+                    loader.style.display = 'none';
                     
                     snapshot.forEach((childSnapshot) => {
                         const product = childSnapshot.val();
                         product.id = childSnapshot.key;
+                        products.push(product);
                         
                         // Create product card
-                        const productCard = document.createElement('div');
-                        productCard.className = 'product-card';
-                        productCard.dataset.id = product.id;
-                        
-                        productCard.innerHTML = `
-                            <div class="product-image">
-                                ${product.discount ? `<div class="product-badge">${product.discount}% OFF</div>` : ''}
-                                <img src="${product.image}" alt="${product.title}">
-                            </div>
-                            <div class="product-details">
-                                <h3 class="product-title">${product.title}</h3>
-                                <div class="product-price">
-                                    ${product.originalPrice ? `<span class="product-original-price">₹${product.originalPrice}</span>` : ''}
-                                    ₹${product.price}
-                                    ${product.discount ? `<span class="product-discount">${product.discount}% off</span>` : ''}
-                                </div>
-                                <div class="product-rating">
-                                    <div class="rating-stars">
-                                        ${getRatingStars(product.rating)}
-                                    </div>
-                                    <span>(${product.ratingCount || 0})</span>
-                                </div>
-                            </div>
-                        `;
-                        
-                        productCard.addEventListener('click', () => showProductModal(product.id));
-                        productGrid.appendChild(productCard);
+                        createProductCard(product);
                     });
+                    
+                    // Apply initial sorting
+                    sortProducts('popular');
+                })
+                .catch((error) => {
+                    loader.style.display = 'none';
+                    console.error('Error loading products:', error);
                 });
+        }
+        
+        // Create product card element
+        function createProductCard(product) {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.dataset.id = product.id;
+            
+            // Generate feature tags
+            let featureTags = '';
+            if (product.noiseCancellation) {
+                featureTags += '<span class="feature-tag">Noise Cancelling</span>';
+            }
+            if (product.battery) {
+                featureTags += `<span class="feature-tag">${product.battery}</span>`;
+            }
+            if (product.colors && product.colors.length > 1) {
+                featureTags += `<span class="feature-tag">${product.colors.length} colors</span>`;
+            }
+            
+            productCard.innerHTML = `
+                <div class="product-image">
+                    ${product.discount ? `<div class="product-badge">${product.discount}% OFF</div>` : ''}
+                    <img src="${product.image}" alt="${product.title}">
+                </div>
+                <div class="product-details">
+                    <h3 class="product-title">${product.title}</h3>
+                    <div class="product-price">
+                        ${product.originalPrice ? `<span class="product-original-price">₹${product.originalPrice}</span>` : ''}
+                        ₹${product.price}
+                        ${product.discount ? `<span class="product-discount">${product.discount}% off</span>` : ''}
+                    </div>
+                    <div class="product-rating">
+                        <div class="rating-stars">
+                            ${getRatingStars(product.rating)}
+                        </div>
+                        <span>(${product.ratingCount || 0})</span>
+                    </div>
+                    ${featureTags ? `<div class="product-features">${featureTags}</div>` : ''}
+                </div>
+            `;
+            
+            productCard.addEventListener('click', () => {
+                window.location.href = `product-detail.html?id=${product.id}`;
+            });
+            
+            productGrid.appendChild(productCard);
         }
         
         // Get rating stars HTML
@@ -334,12 +517,42 @@
             return stars;
         }
         
-        // Show product modal (would be same as in main.html)
-        function showProductModal(productId) {
-            // This would be the same implementation as in your main.html
-            // You might want to move this to a shared JS file
-            window.location.href = `product-detail.html?id=${productId}`;
+        // Sort products based on selected option
+        function sortProducts(sortBy) {
+            let sortedProducts = [...products];
+            
+            switch(sortBy) {
+                case 'price-low':
+                    sortedProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    sortedProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'rating':
+                    sortedProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                    break;
+                case 'discount':
+                    sortedProducts.sort((a, b) => (b.discount || 0) - (a.discount || 0));
+                    break;
+                case 'popular':
+                default:
+                    sortedProducts.sort((a, b) => (b.ratingCount || 0) - (a.ratingCount || 0));
+            }
+            
+            // Re-render products
+            productGrid.innerHTML = '';
+            sortedProducts.forEach(product => {
+                const card = document.querySelector(`.product-card[data-id="${product.id}"]`);
+                if (card) {
+                    productGrid.appendChild(card);
+                }
+            });
         }
+        
+        // Event listener for sort select
+        sortSelect.addEventListener('change', (e) => {
+            sortProducts(e.target.value);
+        });
         
         // Setup navigation
         footerHome.addEventListener('click', () => {
