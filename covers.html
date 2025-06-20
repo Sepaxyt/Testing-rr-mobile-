@@ -31,7 +31,6 @@
             padding-bottom: 60px;
         }
         
-        /* Header Styles */
         header {
             background: linear-gradient(135deg, #0f2027, #203a43);
             color: white;
@@ -73,7 +72,6 @@
             cursor: pointer;
         }
         
-        /* Products Section */
         .products {
             padding: 20px;
         }
@@ -162,16 +160,10 @@
             font-weight: 500;
         }
         
-        .product-rating {
-            display: flex;
-            align-items: center;
-            margin-top: 5px;
+        .product-compatible {
             font-size: 0.8rem;
-        }
-        
-        .rating-stars {
-            color: var(--warning);
-            margin-right: 5px;
+            color: var(--gray);
+            margin: 5px 0;
         }
         
         .view-details-btn {
@@ -192,7 +184,6 @@
             background-color: var(--secondary);
         }
         
-        /* Footer Navigation */
         .footer-nav {
             position: fixed;
             bottom: 0;
@@ -228,7 +219,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="logo-container">
             <i class="fas fa-arrow-left" onclick="window.history.back()"></i>
@@ -244,19 +234,17 @@
         </div>
     </header>
     
-    <!-- Main Content -->
     <main>
         <div class="products">
             <div class="section-title">
                 <h2>All Mobile Covers</h2>
             </div>
             <div class="product-grid" id="productGrid">
-                <!-- Products will be loaded here from Firebase -->
+                <!-- Products will load here -->
             </div>
         </div>
     </main>
     
-    <!-- Footer Navigation -->
     <div class="footer-nav">
         <div class="nav-item" id="footerHome">
             <i class="fas fa-home"></i>
@@ -276,12 +264,10 @@
         </div>
     </div>
     
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     
     <script>
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBOlLzr0liPHXEssNXSpY8XozoYPPEeA60",
             authDomain: "rr-mobile-accessories.firebaseapp.com",
@@ -293,13 +279,11 @@
             measurementId: "G-28RJEQ3X7H"
         };
 
-        // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // Load Mobile Covers products
-        function loadcovers() {
-            database.ref('products').orderByChild('category').equalTo('covers')
+        function loadCovers() {
+            database.ref('products').orderByChild('category').equalTo('covers').once('value')
                 .then((snapshot) => {
                     const productGrid = document.getElementById('productGrid');
                     productGrid.innerHTML = '';
@@ -317,55 +301,24 @@
                             </div>
                             <div class="product-details">
                                 <h3 class="product-title">${product.title}</h3>
+                                ${product.compatible ? `<div class="product-compatible">For ${product.compatible}</div>` : ''}
                                 <div class="product-price">
                                     ${product.originalPrice ? `<span class="product-original-price">₹${product.originalPrice}</span>` : ''}
                                     ₹${product.price}
                                     ${product.discount ? `<span class="product-discount">${product.discount}% off</span>` : ''}
                                 </div>
-                                <div class="product-rating">
-                                    <div class="rating-stars">
-                                        ${getRatingStars(product.rating)}
-                                    </div>
-                                    <span>(${product.ratingCount || 0})</span>
-                                </div>
                                 <a href="product-detail.html?id=${product.id}" class="view-details-btn">View Details</a>
                             </div>
                         `;
-                        
                         productGrid.appendChild(productCard);
                     });
                 });
         }
         
-        // Get rating stars HTML
-        function getRatingStars(rating) {
-            if (!rating) return '';
-            
-            let stars = '';
-            const fullStars = Math.floor(rating);
-            const hasHalfStar = rating % 1 >= 0.5;
-            
-            for (let i = 0; i < fullStars; i++) {
-                stars += '<i class="fas fa-star"></i>';
-            }
-            
-            if (hasHalfStar) {
-                stars += '<i class="fas fa-star-half-alt"></i>';
-            }
-            
-            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-            for (let i = 0; i < emptyStars; i++) {
-                stars += '<i class="far fa-star"></i>';
-            }
-            
-            return stars;
-        }
-        
-        // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
-            loadHeadphones();
+            loadCovers();
             
-            // Footer navigation event listeners
+            // Navigation event listeners
             document.getElementById('footerHome').addEventListener('click', () => {
                 window.location.href = 'main.html';
             });
@@ -382,7 +335,6 @@
                 window.location.href = 'profile.html';
             });
             
-            // Cart icon click
             document.getElementById('cartIcon').addEventListener('click', () => {
                 window.location.href = 'cart.html';
             });
