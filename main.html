@@ -421,6 +421,24 @@
             color: var(--warning);
             margin-right: 5px;
         }
+
+        .view-details-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #4361ee;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+            font-size: 0.8rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .view-details-btn:hover {
+            background-color: #3a56d4;
+        }
         
         /* Footer Navigation */
         .footer-nav {
@@ -635,13 +653,6 @@
             position: relative;
         }
         
-        /* Three Dot Menu Button */
-        .three-dot-menu {
-            position: relative;
-            cursor: pointer;
-            margin-left: 15px;
-        }
-        
         @media (min-width: 768px) {
             .product-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -679,39 +690,6 @@
                 <span class="cart-badge" id="cartBadge">0</span>
             </div>
             <i class="fas fa-user" id="userIcon"></i>
-            <div class="three-dot-menu" id="threeDotMenu">
-                <i class="fas fa-ellipsis-v"></i>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="dropdown-item" id="ddProfile">
-                        <i class="fas fa-user"></i>
-                        <span>Profile</span>
-                    </div>
-                    <div class="dropdown-item" id="ddOrders">
-                        <i class="fas fa-shopping-bag"></i>
-                        <span>My Orders</span>
-                    </div>
-                    <div class="dropdown-item" id="ddWishlist">
-                        <i class="fas fa-heart"></i>
-                        <span>Wishlist</span>
-                    </div>
-                    <div class="dropdown-item" id="ddOffers">
-                        <i class="fas fa-gift"></i>
-                        <span>Offers</span>
-                    </div>
-                    <div class="dropdown-item" id="ddHelp">
-                        <i class="fas fa-headset"></i>
-                        <span>Help Center</span>
-                    </div>
-                    <div class="dropdown-item" id="ddAbout">
-                        <i class="fas fa-info-circle"></i>
-                        <span>About Us</span>
-                    </div>
-                    <div class="dropdown-item logout" id="ddLogout">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </div>
-                </div>
-            </div>
         </div>
     </header>
     
@@ -955,8 +933,6 @@
         const cartIcon = document.getElementById('cartIcon');
         const cartBadge = document.getElementById('cartBadge');
         const userIcon = document.getElementById('userIcon');
-        const threeDotMenu = document.getElementById('threeDotMenu');
-        const dropdownMenu = document.getElementById('dropdownMenu');
         
         // Navigation elements
         const sidebarHome = document.getElementById('sidebarHome');
@@ -977,15 +953,6 @@
         const seeAllCategories = document.getElementById('seeAllCategories');
         const seeAllFeatured = document.getElementById('seeAllFeatured');
         const seeAllDeals = document.getElementById('seeAllDeals');
-        
-        // Dropdown menu items
-        const ddProfile = document.getElementById('ddProfile');
-        const ddOrders = document.getElementById('ddOrders');
-        const ddWishlist = document.getElementById('ddWishlist');
-        const ddOffers = document.getElementById('ddOffers');
-        const ddHelp = document.getElementById('ddHelp');
-        const ddAbout = document.getElementById('ddAbout');
-        const ddLogout = document.getElementById('ddLogout');
         
         // Global variables
         let products = [];
@@ -1105,6 +1072,7 @@
                         </div>
                         <span>(${product.ratingCount || 0})</span>
                     </div>
+                    <a href="product-detail.html?id=${product.id}" class="view-details-btn">View Details</a>
                 </div>
             `;
             
@@ -1226,59 +1194,16 @@
                 overlay.classList.add('active');
             });
             
-            // Three dot menu toggle
-            threeDotMenu.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('active');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!threeDotMenu.contains(e.target)) {
-                    dropdownMenu.classList.remove('active');
-                }
-            });
-            
-            // Dropdown menu items
-            ddProfile.addEventListener('click', () => {
-                window.location.href = 'profile.html';
-                dropdownMenu.classList.remove('active');
-            });
-            
-            ddOrders.addEventListener('click', () => {
-                window.location.href = 'orders.html';
-                dropdownMenu.classList.remove('active');
-            });
-            
-            ddWishlist.addEventListener('click', () => {
-                window.location.href = 'wishlist.html';
-                dropdownMenu.classList.remove('active');
-            });
-            
-            ddOffers.addEventListener('click', () => {
-                window.location.href = 'offers.html';
-                dropdownMenu.classList.remove('active');
-            });
-            
-            ddHelp.addEventListener('click', () => {
-                window.location.href = 'help.html';
-                dropdownMenu.classList.remove('active');
-            });
-            
-            ddAbout.addEventListener('click', () => {
-                window.location.href = 'about.html';
-                dropdownMenu.classList.remove('active');
-            });
-            
-            ddLogout.addEventListener('click', () => {
-                auth.signOut().then(() => {
-                    window.location.href = 'login.html';
-                });
-            });
-            
             // Navigation items
-            sidebarHome.addEventListener('click', () => {
-                window.location.href = 'index.html';
+            sidebarHome.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Just close sidebar if already on home page
+                if (window.location.pathname.endsWith('index.html') {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                } else {
+                    window.location.href = 'index.html';
+                }
             });
             
             sidebarProfile.addEventListener('click', () => {
@@ -1311,7 +1236,12 @@
                 });
             });
             
-            footerHome.addEventListener('click', () => {
+            footerHome.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Just close sidebar if already on home page
+                if (window.location.pathname.endsWith('index.html')) {
+                    return;
+                }
                 window.location.href = 'index.html';
             });
             
@@ -1432,15 +1362,15 @@
         }
         
         // Send Telegram notification with complete order details
-function sendTelegramNotification(orderId, product, quantity, userEmail) {
-    // Get current user data
-    const userId = auth.currentUser.uid;
-    database.ref('users/' + userId).once('value').then((snapshot) => {
-        const userData = snapshot.val();
-        
-        // Format the message with all required details
-        const message = `🎧 New Headphones Order Received 🎧
-            
+        function sendTelegramNotification(orderId, product, quantity, userEmail) {
+            // Get current user data
+            const userId = auth.currentUser.uid;
+            database.ref('users/' + userId).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                
+                // Format the message with all required details
+                const message = `🎧 New Headphones Order Received 🎧
+                    
 📦 Order Details:
 Product: ${product.title}
 Quantity: ${quantity}
@@ -1457,15 +1387,15 @@ ${userData.city || ''}, ${userData.state || ''} - ${userData.pincode || ''}
 Landmark: ${userData.landmark || 'Not provided'}
 
 🕒 Order placed at: ${new Date().toLocaleString()}`;
-        
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
-        
-        fetch(url)
-            .then(response => response.json())
-            .then(data => console.log('Telegram notification sent:', data))
-            .catch(error => console.error('Error sending Telegram notification:', error));
-    });
-}
+                
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => console.log('Telegram notification sent:', data))
+                    .catch(error => console.error('Error sending Telegram notification:', error));
+            });
+        }
     </script>
 </body>
 </html>
