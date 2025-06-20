@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - RR MOBILE ACCESSORIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #555;
+            margin-right: 20px;
+            overflow: hidden;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info p {
+            color: #666;
+        }
+        
+        .profile-form {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input, 
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus, 
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-btn i {
+            margin-right: 5px;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="main.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+        
+        <div class="success-message" id="successMessage">
+            Profile updated successfully!
+        </div>
+        
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <h2 id="profileNameDisplay">User Name</h2>
+                <p id="profileEmailDisplay">user@example.com</p>
+            </div>
+        </div>
+        
+        <div class="profile-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter your phone number">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" disabled>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Full Address</label>
+                <textarea id="address" rows="3" placeholder="Enter your complete address"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" placeholder="Enter your city">
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" placeholder="Enter your state">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pincode">Pincode</label>
+                    <input type="text" id="pincode" placeholder="Enter your pincode">
+                </div>
+                <div class="form-group">
+                    <label for="landmark">Landmark</label>
+                    <input type="text" id="landmark" placeholder="Enter nearby landmark">
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" id="saveProfileBtn">Save Profile</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOlLzr0liPHXEssNXSpY8XozoYPPEeA60",
+            authDomain: "rr-mobile-accessories.firebaseapp.com",
+            databaseURL: "https://rr-mobile-accessories-default-rtdb.firebaseio.com",
+            projectId: "rr-mobile-accessories",
+            storageBucket: "rr-mobile-accessories.appspot.com",
+            messagingSenderId: "261034064103",
+            appId: "1:261034064103:web:b59fbb7118dd7f93868a42",
+            measurementId: "G-28RJEQ3X7H"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // DOM Elements
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const addressInput = document.getElementById('address');
+        const cityInput = document.getElementById('city');
+        const stateInput = document.getElementById('state');
+        const pincodeInput = document.getElementById('pincode');
+        const landmarkInput = document.getElementById('landmark');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const profileNameDisplay = document.getElementById('profileNameDisplay');
+        const profileEmailDisplay = document.getElementById('profileEmailDisplay');
+        const profileAvatar = document.getElementById('profileAvatar');
+        const successMessage = document.getElementById('successMessage');
+        
+        // Check authentication and load profile data
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                // Load user data from Firebase
+                loadUserProfile(user.uid);
+            }
+        });
+        
+        // Load user profile from Firebase
+        function loadUserProfile(userId) {
+            database.ref('users/' + userId).once('value')
+                .then((snapshot) => {
+                    const userData = snapshot.val();
+                    
+                    if (userData) {
+                        // Display user data in form
+                        nameInput.value = userData.name || '';
+                        emailInput.value = userData.email || '';
+                        phoneInput.value = userData.phone || '';
+                        addressInput.value = userData.address || '';
+                        cityInput.value = userData.city || '';
+                        stateInput.value = userData.state || '';
+                        pincodeInput.value = userData.pincode || '';
+                        landmarkInput.value = userData.landmark || '';
+                        
+                        // Update profile display
+                        profileNameDisplay.textContent = userData.name || 'User Name';
+                        profileEmailDisplay.textContent = userData.email || 'user@example.com';
+                        
+                        // Set avatar with initials if no image
+                        if (!userData.photoURL) {
+                            const initials = userData.name ? userData.name.charAt(0) : 'U';
+                            profileAvatar.textContent = initials;
+                            profileAvatar.style.fontSize = '2rem';
+                            profileAvatar.style.color = '#555';
+                        }
+                    }
+                });
+        }
+        
+        // Save profile data
+        saveProfileBtn.addEventListener('click', () => {
+            const userId = auth.currentUser?.uid;
+            if (!userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userData = {
+                name: nameInput.value.trim(),
+                email: auth.currentUser.email,
+                phone: phoneInput.value.trim(),
+                address: addressInput.value.trim(),
+                city: cityInput.value.trim(),
+                state: stateInput.value.trim(),
+                pincode: pincodeInput.value.trim(),
+                landmark: landmarkInput.value.trim(),
+                updatedAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            // Validate required fields
+            if (!userData.name || !userData.phone || !userData.address || !userData.city || !userData.pincode) {
+                alert('Please fill all required fields (Name, Phone, Address, City, Pincode)');
+                return;
+            }
+            
+            // Save to Firebase
+            database.ref('users/' + userId).update(userData)
+                .then(() => {
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                    
+                    // Update profile display
+                    profileNameDisplay.textContent = userData.name;
+                })
+                .catch((error) => {
+                    console.error('Error saving profile:', error);
+                    alert('Error saving profile. Please try again.');
+                });
+        });
+    </script>
+</body>
+</html>

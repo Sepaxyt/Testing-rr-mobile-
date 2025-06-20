@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RR MOBILE ACCESSORIES - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --danger: #f72585;
+            --success: #4cc9f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--light);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .left-panel {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: url('https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png') center/cover;
+            position: relative;
+        }
+        
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 32, 39, 0.7);
+        }
+        
+        .left-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .left-panel h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .left-panel p {
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 50px 40px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .form {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .form.active {
+            display: flex;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            margin-right: 8px;
+        }
+        
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .form-footer {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-footer p {
+            margin-bottom: 10px;
+        }
+        
+        .switch-form {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                padding: 30px;
+            }
+            
+            .right-panel {
+                padding: 30px;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="left-content">
+                <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="RR MOBILE ACCESSORIES Logo" class="logo">
+                <h1>RR MOBILE ACCESSORIES</h1>
+                <p>Premium Mobile Accessories Store</p>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="form-container">
+                <div class="tab-container">
+                    <div class="tab active" id="loginTab">Login</div>
+                    <div class="tab" id="registerTab">Create Account</div>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="form active">
+                    <div class="input-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                        <span class="password-toggle" onclick="togglePassword('loginPassword')">👁️</span>
+                    </div>
+                    
+                    <div class="remember-forgot">
+                        <div class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <label for="rememberMe">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
+                    </div>
+                    
+                    <div class="error-message" id="loginError"></div>
+                    
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="form">
+                    <div class="input-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="registerMobile">Mobile Number</label>
+                        <input type="tel" id="registerMobile" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" required>
+                        <span class="password-toggle" onclick="togglePassword('registerPassword')">👁️</span>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="registerConfirmPassword">Confirm Password</label>
+                        <input type="password" id="registerConfirmPassword" required>
+                        <span class="password-toggle" onclick="togglePassword('registerConfirmPassword')">👁️</span>
+                    </div>
+                    
+                    <div class="error-message" id="registerError"></div>
+                    
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+                
+                <div class="form-footer">
+                    <p id="switchMessage">Don't have an account? <span class="switch-form" id="switchForm">Register</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOlLzr0liPHXEssNXSpY8XozoYPPEeA60",
+            authDomain: "rr-mobile-accessories.firebaseapp.com",
+            databaseURL: "https://rr-mobile-accessories-default-rtdb.firebaseio.com",
+            projectId: "rr-mobile-accessories",
+            storageBucket: "rr-mobile-accessories.appspot.com",
+            messagingSenderId: "261034064103",
+            appId: "1:261034064103:web:b59fbb7118dd7f93868a42",
+            measurementId: "G-28RJEQ3X7H"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // DOM Elements
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const switchForm = document.getElementById('switchForm');
+        const switchMessage = document.getElementById('switchMessage');
+        const loginError = document.getElementById('loginError');
+        const registerError = document.getElementById('registerError');
+        const forgotPassword = document.getElementById('forgotPassword');
+        const rememberMe = document.getElementById('rememberMe');
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in, redirect to main page
+                window.location.href = "main.html";
+            }
+        });
+
+        // Tab switching
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginForm.classList.add('active');
+            registerForm.classList.remove('active');
+            switchMessage.innerHTML = 'Don\'t have an account? <span class="switch-form" id="switchForm">Register</span>';
+        });
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            registerForm.classList.add('active');
+            loginForm.classList.remove('active');
+            switchMessage.innerHTML = 'Already have an account? <span class="switch-form" id="switchForm">Login</span>';
+        });
+
+        switchForm.addEventListener('click', () => {
+            if (loginForm.classList.contains('active')) {
+                registerTab.click();
+            } else {
+                loginTab.click();
+            }
+        });
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+
+        // Register new user
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = registerName.value.trim();
+            const mobile = registerMobile.value.trim();
+            const email = registerEmail.value.trim();
+            const password = registerPassword.value;
+            const confirmPassword = registerConfirmPassword.value;
+            
+            // Validate inputs
+            if (password !== confirmPassword) {
+                showError(registerError, "Passwords don't match");
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError(registerError, "Password must be at least 6 characters");
+                return;
+            }
+            
+            // Create user with email and password
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // User created successfully
+                    const user = userCredential.user;
+                    
+                    // Save additional user data to Realtime Database
+                    const userData = {
+                        name: name,
+                        mobile: mobile,
+                        email: email,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    };
+                    
+                    return database.ref('users/' + user.uid).set(userData);
+                })
+                .then(() => {
+                    // Set persistence based on remember me
+                    const persistence = rememberMe.checked ? 
+                        firebase.auth.Auth.Persistence.LOCAL : 
+                        firebase.auth.Auth.Persistence.SESSION;
+                    
+                    return auth.setPersistence(persistence);
+                })
+                .then(() => {
+                    // Redirect to main page
+                    window.location.href = "main.html";
+                })
+                .catch((error) => {
+                    showError(registerError, error.message);
+                });
+        });
+
+        // Login existing user
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    // Set persistence based on remember me
+                    const persistence = rememberMe.checked ? 
+                        firebase.auth.Auth.Persistence.LOCAL : 
+                        firebase.auth.Auth.Persistence.SESSION;
+                    
+                    return auth.setPersistence(persistence);
+                })
+                .then(() => {
+                    // Redirect to main page
+                    window.location.href = "main.html";
+                })
+                .catch((error) => {
+                    showError(loginError, error.message);
+                });
+        });
+
+        // Forgot password
+        forgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = loginEmail.value.trim();
+            
+            if (!email) {
+                showError(loginError, "Please enter your email first");
+                return;
+            }
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showError(loginError, "Password reset email sent. Check your inbox.", 'success');
+                })
+                .catch((error) => {
+                    showError(loginError, error.message);
+                });
+        });
+
+        // Show error message
+        function showError(element, message, type = 'error') {
+            element.textContent = message;
+            element.style.display = 'block';
+            element.style.color = type === 'error' ? '#f72585' : '#4cc9f0';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Check if there's a saved email/password
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('savedEmail');
+            const savedPassword = localStorage.getItem('savedPassword');
+            
+            if (savedEmail) {
+                loginEmail.value = savedEmail;
+            }
+            
+            if (savedPassword) {
+                loginPassword.value = savedPassword;
+                rememberMe.checked = true;
+            }
+        });
+    </script>
+</body>
+</html>
