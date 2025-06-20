@@ -398,6 +398,10 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -413,7 +417,23 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const database = firebase.database();
+        
+        // Current product data
+        let currentProduct = {
+            id: 'prod001',
+            title: 'Sony WH-1000XM5 Wireless Headphones',
+            brand: 'Sony',
+            price: 28990,
+            originalPrice: 32990,
+            discount: 12,
+            description: 'Experience industry-leading noise cancellation with the Sony WH-1000XM5 wireless headphones. Featuring 30-hour battery life, crystal clear hands-free calling, and touch sensor controls for easy operation. The perfect companion for your music and calls.',
+            rating: 4.5,
+            ratingCount: 3421,
+            category: 'headphones',
+            image: 'https://m.media-amazon.com/images/I/71Q3NkHTJ5L._SL1500_.jpg'
+        };
         
         // Function to change main image when thumbnail is clicked
         function changeImage(element) {
@@ -440,70 +460,160 @@
             }
         }
         
-        // Load product data from URL parameters
-        function loadProductData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
-            
-            if (productId) {
-                database.ref('products/' + productId).once('value')
-                    .then(snapshot => {
-                        const product = snapshot.val();
-                        if (product) {
-                            // Update the page with product data
-                            document.getElementById('productTitle').textContent = product.title;
-                            document.getElementById('productBrand').textContent = `Brand: ${product.brand}`;
-                            document.getElementById('currentPrice').textContent = `₹${product.price.toLocaleString('en-IN')}`;
-                            document.getElementById('originalPrice').textContent = `₹${product.originalPrice.toLocaleString('en-IN')}`;
-                            document.getElementById('discount').textContent = `${product.discount}% off`;
-                            document.getElementById('productDescription').textContent = product.description;
-                            document.getElementById('ratingCount').textContent = `(${product.ratingCount} ratings)`;
-                            
-                            // Update main image
-                            document.getElementById('mainImage').src = product.image;
-                            
-                            // Update rating stars
-                            updateRatingStars(product.rating);
-                            
-                            // Load related products
-                            loadRelatedProducts(product.category, productId);
-                        }
-                    });
+        // Add to cart function
+        function addToCart() {
+            const user = auth.currentUser;
+            if (!user) {
+                alert('Please login to add items to cart');
+                window.location.href = 'login.html';
+                return;
             }
+            
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            // Create cart item
+            const cartItem = {
+                productId: currentProduct.id,
+                productTitle: currentProduct.title,
+                productImage: currentProduct.image,
+                price: currentProduct.price,
+                quantity: quantity,
+                addedAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            // Add to Firebase
+            const newCartItemRef = database.ref('carts/' + user.uid + '/items').push();
+            newCartItemRef.set(cartItem)
+                .then(() => {
+                    alert('Product added to cart successfully!');
+                })
+                .catch(error => {
+                    console.error('Error adding to cart:', error);
+                    alert('Error adding to cart. Please try again.');
+                });
         }
         
-        // Update rating stars display
-        function updateRatingStars(rating) {
-            const starsContainer = document.querySelector('.rating-stars');
-            starsContainer.innerHTML = '';
-            
-            const fullStars = Math.floor(rating);
-            const hasHalfStar = rating % 1 >= 0.5;
-            
-            for (let i = 0; i < fullStars; i++) {
-                starsContainer.innerHTML += '<i class="fas fa-star"></i>';
+        // Buy now function
+        function buyNow() {
+            const user = auth.currentUser;
+            if (!user) {
+                alert('Please login to proceed with purchase');
+                window.location.href = 'login.html';
+                return;
             }
             
-            if (hasHalfStar) {
-                starsContainer.innerHTML += '<i class="fas fa-star-half-alt"></i>';
-            }
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const total = currentProduct.price * quantity;
             
-            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-            for (let i = 0; i < emptyStars; i++) {
-                starsContainer.innerHTML += '<i class="far fa-star"></i>';
-            }
+            // First check if user has address details
+            database.ref('users/' + user.uid).once('value')
+                .then(snapshot => {
+                    const userData = snapshot.val();
+                    if (!userData || !userData.address || !userData.phone) {
+                        alert('Please complete your profile with address details before placing an order');
+                        window.location.href = 'profile.html';
+                        return;
+                    }
+                    
+                    // Create order
+                    const order = {
+                        userId: user.uid,
+                        productId: currentProduct.id,
+                        productTitle: currentProduct.title,
+                        productImage: currentProduct.image,
+                        price: currentProduct.price,
+                        quantity: quantity,
+                        total: total,
+                        status: 'pending',
+                        paymentMethod: 'Cash on Delivery',
+                        createdAt: firebase.database.ServerValue.TIMESTAMP,
+                        customerName: userData.name,
+                        customerPhone: userData.phone,
+                        customerEmail: user.email,
+                        shippingAddress: userData.address,
+                        city: userData.city,
+                        state: userData.state,
+                        pincode: userData.pincode,
+                        landmark: userData.landmark
+                    };
+                    
+                    // Add to Firebase
+                    const newOrderRef = database.ref('orders').push();
+                    newOrderRef.set(order)
+                        .then(() => {
+                            // Send Telegram notification
+                            sendTelegramOrderNotification(order, newOrderRef.key);
+                            
+                            // Redirect to success page
+                            window.location.href = `order-success.html?orderId=${newOrderRef.key}`;
+                        })
+                        .catch(error => {
+                            console.error('Error placing order:', error);
+                            alert('Error placing order. Please try again.');
+                        });
+                });
+        }
+        
+        // Send Telegram notification for new order
+        function sendTelegramOrderNotification(order, orderId) {
+            const telegramBotToken = '8059039278:AAFC-fy4GUsgil2EwHxEclwzR8H02SEqvak';
+            const chatId = '6690653192';
+            
+            const orderDate = new Date(order.createdAt).toLocaleString('en-IN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const message = `🎧 New Headphones Order Received 🎧
+            
+📦 Order Details:
+Product: ${order.productTitle}
+Quantity: ${order.quantity}
+Price: ₹${order.price}
+Total: ₹${order.total}
+
+👤 Customer Details:
+Name: ${order.customerName}
+Phone: ${order.customerPhone}
+Email: ${order.customerEmail}
+
+🏠 Delivery Address:
+${order.shippingAddress}
+${order.city}, ${order.state} - ${order.pincode}
+Landmark: ${order.landmark}
+
+🕒 Order placed at: ${orderDate}
+🆔 Order ID: ${orderId}`;
+            
+            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Telegram notification sent:', data))
+            .catch(error => console.error('Error sending Telegram notification:', error));
         }
         
         // Load related products
-        function loadRelatedProducts(category, currentProductId) {
-            database.ref('products').orderByChild('category').equalTo(category).limitToLast(4).once('value')
+        function loadRelatedProducts() {
+            database.ref('products').orderByChild('category').equalTo(currentProduct.category).limitToLast(4).once('value')
                 .then(snapshot => {
                     const relatedProductsGrid = document.getElementById('relatedProducts');
                     relatedProductsGrid.innerHTML = '';
                     
                     snapshot.forEach(childSnapshot => {
                         const product = childSnapshot.val();
-                        if (childSnapshot.key !== currentProductId) {
+                        if (childSnapshot.key !== currentProduct.id) {
                             const productCard = createProductCard(product);
                             relatedProductsGrid.appendChild(productCard);
                         }
@@ -537,28 +647,13 @@
         
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
-            loadProductData();
-            
-            // Add event listeners for buttons
+            // Set up button event listeners
             document.getElementById('addToCartBtn').addEventListener('click', addToCart);
             document.getElementById('buyNowBtn').addEventListener('click', buyNow);
+            
+            // Load related products
+            loadRelatedProducts();
         });
-        
-        // Add to cart function
-        function addToCart() {
-            // Implement your cart functionality here
-            alert('Product added to cart!');
-        }
-        
-        // Buy now function
-        function buyNow() {
-            // Implement your checkout functionality here
-            window.location.href = 'checkout.html';
-        }
     </script>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 </body>
 </html>
