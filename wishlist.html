@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist - RR MOBILE ACCESSORIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Same header/footer styles as cart.html */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --danger: #f72585;
+            --success: #4cc9f0;
+        }
+        
+        .wishlist-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .wishlist-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .wishlist-title i {
+            margin-right: 10px;
+            color: var(--danger);
+        }
+        
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .wishlist-item {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            position: relative;
+        }
+        
+        .wishlist-item-image {
+            height: 150px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .wishlist-item-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .wishlist-item-title {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .wishlist-item-price {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .wishlist-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .wishlist-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .add-to-cart-btn {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .remove-btn {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+        }
+        
+        .empty-wishlist {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        
+        .empty-wishlist i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Same header as cart.html -->
+    
+    <div class="wishlist-container">
+        <h1 class="wishlist-title"><i class="fas fa-heart"></i> Your Wishlist</h1>
+        
+        <div id="wishlistItemsContainer">
+            <!-- Wishlist items will load here -->
+            <div class="empty-wishlist">
+                <i class="fas fa-heart"></i>
+                <p>Your wishlist is empty</p>
+                <a href="main.html" class="shop-now-btn">Browse Products</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Same footer as cart.html -->
+    
+    <script>
+        // Firebase initialization same as cart.html
+        
+        function loadWishlist() {
+            const user = auth.currentUser;
+            if (user) {
+                database.ref('wishlist/' + user.uid).on('value', (snapshot) => {
+                    const container = document.getElementById('wishlistItemsContainer');
+                    
+                    if (snapshot.exists()) {
+                        container.innerHTML = '';
+                        snapshot.forEach((childSnapshot) => {
+                            const item = childSnapshot.val();
+                            const productId = childSnapshot.key;
+                            
+                            database.ref('products/' + productId).once('value').then((productSnapshot) => {
+                                const product = productSnapshot.val();
+                                
+                                const itemElement = document.createElement('div');
+                                itemElement.className = 'wishlist-item';
+                                itemElement.innerHTML = `
+                                    <div class="wishlist-item-image">
+                                        <img src="${product.image}" alt="${product.title}">
+                                    </div>
+                                    <h3 class="wishlist-item-title">${product.title}</h3>
+                                    <div class="wishlist-item-price">₹${product.price}</div>
+                                    <div class="wishlist-item-actions">
+                                        <button class="wishlist-btn add-to-cart-btn" onclick="addToCart('${productId}')">
+                                            Add to Cart
+                                        </button>
+                                        <button class="wishlist-btn remove-btn" onclick="removeFromWishlist('${productId}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                `;
+                                container.appendChild(itemElement);
+                            });
+                        });
+                    } else {
+                        container.innerHTML = `
+                            <div class="empty-wishlist">
+                                <i class="fas fa-heart"></i>
+                                <p>Your wishlist is empty</p>
+                                <a href="main.html" class="shop-now-btn">Browse Products</a>
+                            </div>
+                        `;
+                    }
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+        
+        function addToCart(productId) {
+            // Implement add to cart functionality
+        }
+        
+        function removeFromWishlist(productId) {
+            const user = auth.currentUser;
+            if (user) {
+                database.ref('wishlist/' + user.uid + '/' + productId).remove();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadWishlist);
+    </script>
+</body>
+</html>
