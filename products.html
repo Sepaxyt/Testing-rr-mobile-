@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - RR MOBILE ACCESSORIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f2027, #203a43);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-btn i {
+            margin-right: 5px;
+        }
+        
+        .page-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .product-container {
+            background: white;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .product-image {
+            height: 250px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .product-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--danger);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .product-details {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .product-original-price {
+            font-size: 1rem;
+            color: var(--gray);
+            text-decoration: line-through;
+            margin-right: 10px;
+        }
+        
+        .product-discount {
+            font-size: 1rem;
+            color: var(--success);
+            font-weight: 500;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .rating-stars {
+            color: var(--warning);
+            margin-right: 5px;
+        }
+        
+        .product-description {
+            font-size: 0.95rem;
+            color: #555;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-left: none;
+            border-right: none;
+            font-size: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            position: fixed;
+            bottom: 70px;
+            left: 15px;
+            right: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <div class="page-title">Product Details</div>
+        <div></div> <!-- Empty div for alignment -->
+    </div>
+    
+    <div class="product-container" id="productContainer">
+        <div class="product-image">
+            <img src="" alt="Product Image" id="productImage">
+        </div>
+        <div class="product-details">
+            <h1 class="product-title" id="productTitle">Product Title</h1>
+            <div class="product-price">
+                <span id="productPrice">₹999</span>
+                <span class="product-original-price" id="productOriginalPrice">₹1299</span>
+                <span class="product-discount" id="productDiscount">23% off</span>
+            </div>
+            <div class="product-rating">
+                <div class="rating-stars" id="ratingStars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <span>(<span id="ratingCount">124</span> ratings)</span>
+            </div>
+            <div class="product-description" id="productDescription">
+                This is a detailed description of the product. It includes all the features and specifications that the customer might want to know before making a purchase decision.
+            </div>
+            <div class="quantity-selector">
+                <div class="quantity-btn minus">-</div>
+                <input type="number" class="quantity-input" value="1" min="1" id="quantityInput">
+                <div class="quantity-btn plus">+</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="action-buttons">
+        <button class="btn btn-outline" id="addToCartBtn">Add to Cart</button>
+        <button class="btn btn-primary" id="buyNowBtn">Buy Now</button>
+    </div>
+    
+    <!-- Footer Navigation -->
+    <div class="footer-nav">
+        <div class="nav-item" id="footerHome">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" id="footerSearch">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+        </div>
+        <div class="nav-item" id="footerOrders">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Orders</span>
+        </div>
+        <div class="nav-item" id="footerWishlist">
+            <i class="fas fa-heart"></i>
+            <span>Wishlist</span>
+        </div>
+        <div class="nav-item" id="footerAccount">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOlLzr0liPHXEssNXSpY8XozoYPPEeA60",
+            authDomain: "rr-mobile-accessories.firebaseapp.com",
+            databaseURL: "https://rr-mobile-accessories-default-rtdb.firebaseio.com",
+            projectId: "rr-mobile-accessories",
+            storageBucket: "rr-mobile-accessories.appspot.com",
+            messagingSenderId: "261034064103",
+            appId: "1:261034064103:web:b59fbb7118dd7f93868a42",
+            measurementId: "G-28RJEQ3X7H"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // DOM Elements
+        const productImage = document.getElementById('productImage');
+        const productTitle = document.getElementById('productTitle');
+        const productPrice = document.getElementById('productPrice');
+        const productOriginalPrice = document.getElementById('productOriginalPrice');
+        const productDiscount = document.getElementById('productDiscount');
+        const ratingStars = document.getElementById('ratingStars');
+        const ratingCount = document.getElementById('ratingCount');
+        const productDescription = document.getElementById('productDescription');
+        const quantityInput = document.getElementById('quantityInput');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+        const buyNowBtn = document.getElementById('buyNowBtn');
+        
+        // Navigation elements
+        const footerHome = document.getElementById('footerHome');
+        const footerSearch = document.getElementById('footerSearch');
+        const footerOrders = document.getElementById('footerOrders');
+        const footerWishlist = document.getElementById('footerWishlist');
+        const footerAccount = document.getElementById('footerAccount');
+        
+        // Global variables
+        let currentProduct = null;
+        
+        // Check authentication and load product
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                loadProduct();
+            }
+        });
+        
+        // Load product details
+        function loadProduct() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            
+            if (!productId) {
+                window.location.href = 'main.html';
+                return;
+            }
+            
+            database.ref('products/' + productId).once('value')
+                .then((snapshot) => {
+                    currentProduct = snapshot.val();
+                    if (!currentProduct) {
+                        window.location.href = 'main.html';
+                        return;
+                    }
+                    
+                    // Update product details
+                    productImage.src = currentProduct.image;
+                    productTitle.textContent = currentProduct.title;
+                    productPrice.textContent = `₹${currentProduct.price}`;
+                    
+                    if (currentProduct.originalPrice) {
+                        productOriginalPrice.textContent = `₹${currentProduct.originalPrice}`;
+                        productDiscount.textContent = `${currentProduct.discount}% off`;
+                    } else {
+                        productOriginalPrice.textContent = '';
+                        productDiscount.textContent = '';
+                    }
+                    
+                    ratingCount.textContent = currentProduct.ratingCount || 0;
+                    productDescription.textContent = currentProduct.description || 'No description available';
+                    
+                    // Update rating stars
+                    ratingStars.innerHTML = getRatingStars(currentProduct.rating);
+                });
+        }
+        
+        // Get rating stars HTML
+        function getRatingStars(rating) {
+            if (!rating) return '';
+            
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            return stars;
+        }
+        
+        // Quantity selector
+        document.querySelector('.quantity-btn.minus').addEventListener('click', () => {
+            if (quantityInput.value > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+            }
+        });
+        
+        document.querySelector('.quantity-btn.plus').addEventListener('click', () => {
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        });
+        
+        // Add to cart
+        addToCartBtn.addEventListener('click', () => {
+            if (!currentProduct) return;
+            
+            const quantity = parseInt(quantityInput.value);
+            const userId = auth.currentUser?.uid;
+            
+            if (!userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Add to cart in Firebase
+            database.ref('carts/' + userId + '/items/' + currentProduct.id).set({
+                productId: currentProduct.id,
+                productTitle: currentProduct.title,
+                productImage: currentProduct.image,
+                price: currentProduct.price,
+                quantity: quantity,
+                addedAt: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                alert('Product added to cart!');
+            });
+        });
+        
+        // Buy now
+        buyNowBtn.addEventListener('click', () => {
+            if (!currentProduct) return;
+            
+            const quantity = parseInt(quantityInput.value);
+            const userId = auth.currentUser?.uid;
+            const userEmail = auth.currentUser?.email;
+            
+            if (!userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Create order in Firebase
+            const orderRef = database.ref('orders').push();
+            orderRef.set({
+                userId: userId,
+                userEmail: userEmail,
+                productId: currentProduct.id,
+                productTitle: currentProduct.title,
+                productImage: currentProduct.image,
+                quantity: quantity,
+                price: currentProduct.price,
+                total: currentProduct.price * quantity,
+                status: 'pending',
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                paymentMethod: 'Cash on Delivery'
+            }).then(() => {
+                // Redirect to order success page
+                window.location.href = `order-success.html?orderId=${orderRef.key}`;
+            });
+        });
+        
+        // Setup navigation
+        footerHome.addEventListener('click', () => {
+            window.location.href = 'main.html';
+        });
+        
+        footerSearch.addEventListener('click', () => {
+            window.location.href = 'search.html';
+        });
+        
+        footerOrders.addEventListener('click', () => {
+            window.location.href = 'orders.html';
+        });
+        
+        footerWishlist.addEventListener('click', () => {
+            window.location.href = 'wishlist.html';
+        });
+        
+        footerAccount.addEventListener('click', () => {
+            window.location.href = 'profile.html';
+        });
+    </script>
+</body>
+</html>
