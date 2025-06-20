@@ -394,7 +394,7 @@
                                 </div>
                                 <div class="cart-item-details">
                                     <h3 class="cart-item-title">${item.productTitle}</h3>
-                                    <div class="cart-item-price">₹${item.price}</div>
+                                    <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</div>
                                     <div class="quantity-control">
                                         <div class="quantity-btn minus" onclick="updateQuantity('${item.id}', -1)">-</div>
                                         <input type="number" class="quantity-input" value="${item.quantity}" min="1" id="quantity-${item.id}">
@@ -409,8 +409,8 @@
                         });
                         
                         // Update summary
-                        document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
-                        document.getElementById('total').textContent = `₹${subtotal.toFixed(2)}`;
+                        document.getElementById('subtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+                        document.getElementById('total').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
                         cartSummaryContainer.style.display = 'block';
                     } else {
                         cartItemsContainer.innerHTML = `
@@ -451,6 +451,134 @@
             }
         }
         
+        // Proceed to checkout
+        function proceedToCheckout() {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // First check if user has address details
+            database.ref('users/' + user.uid).once('value')
+                .then(snapshot => {
+                    const userData = snapshot.val();
+                    if (!userData || !userData.address || !userData.phone) {
+                        alert('Please complete your profile with address details before placing an order');
+                        window.location.href = 'profile.html';
+                        return;
+                    }
+                    
+                    // Get cart items
+                    database.ref('carts/' + user.uid + '/items').once('value')
+                        .then(snapshot => {
+                            if (!snapshot.exists()) {
+                                alert('Your cart is empty');
+                                return;
+                            }
+                            
+                            let total = 0;
+                            const items = [];
+                            
+                            snapshot.forEach(childSnapshot => {
+                                const item = childSnapshot.val();
+                                items.push(item);
+                                total += item.price * item.quantity;
+                            });
+                            
+                            // Create order
+                            const order = {
+                                userId: user.uid,
+                                items: items,
+                                total: total,
+                                status: 'pending',
+                                paymentMethod: 'Cash on Delivery',
+                                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                                customerName: userData.name,
+                                customerPhone: userData.phone,
+                                customerEmail: user.email,
+                                shippingAddress: userData.address,
+                                city: userData.city,
+                                state: userData.state,
+                                pincode: userData.pincode,
+                                landmark: userData.landmark
+                            };
+                            
+                            // Add to Firebase
+                            const newOrderRef = database.ref('orders').push();
+                            newOrderRef.set(order)
+                                .then(() => {
+                                    // Clear cart
+                                    database.ref('carts/' + user.uid + '/items').remove();
+                                    
+                                    // Send Telegram notification
+                                    sendTelegramOrderNotification(order, newOrderRef.key);
+                                    
+                                    // Redirect to success page
+                                    window.location.href = `order-success.html?orderId=${newOrderRef.key}`;
+                                })
+                                .catch(error => {
+                                    console.error('Error placing order:', error);
+                                    alert('Error placing order. Please try again.');
+                                });
+                        });
+                });
+        }
+        
+        // Send Telegram notification for new order
+        function sendTelegramOrderNotification(order, orderId) {
+            const telegramBotToken = '8059039278:AAFC-fy4GUsgil2EwHxEclwzR8H02SEqvak';
+            const chatId = '6690653192';
+            
+            const orderDate = new Date(order.createdAt).toLocaleString('en-IN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            // Build products list
+            let productsList = '';
+            order.items.forEach(item => {
+                productsList += `- ${item.productTitle} (Qty: ${item.quantity}, ₹${item.price})\n`;
+            });
+            
+            const message = `🛒 New Order Received 🛒
+            
+📦 Order Details:
+${productsList}
+Total: ₹${order.total}
+
+👤 Customer Details:
+Name: ${order.customerName}
+Phone: ${order.customerPhone}
+Email: ${order.customerEmail}
+
+🏠 Delivery Address:
+${order.shippingAddress}
+${order.city}, ${order.state} - ${order.pincode}
+Landmark: ${order.landmark}
+
+🕒 Order placed at: ${orderDate}
+🆔 Order ID: ${orderId}`;
+            
+            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Telegram notification sent:', data))
+            .catch(error => console.error('Error sending Telegram notification:', error));
+        }
+        
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
             auth.onAuthStateChanged((user) => {
@@ -458,9 +586,7 @@
                     loadCartItems();
                     
                     // Setup checkout button
-                    document.getElementById('checkoutBtn').addEventListener('click', () => {
-                        window.location.href = 'checkout.html';
-                    });
+                    document.getElementById('checkoutBtn').addEventListener('click', proceedToCheckout);
                     
                     // Footer navigation
                     document.getElementById('footerHome').addEventListener('click', () => {
