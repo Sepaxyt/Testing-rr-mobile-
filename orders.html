@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - RR MOBILE ACCESSORIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-btn i {
+            margin-right: 5px;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-id {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .order-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .order-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .order-product {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .product-image {
+            width: 70px;
+            height: 70px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .product-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .product-info {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .product-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .product-quantity {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .order-total {
+            font-weight: 600;
+        }
+        
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .no-orders i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="main.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <h1 class="page-title">My Orders</h1>
+        <div></div> <!-- Empty div for alignment -->
+    </div>
+    
+    <div id="ordersContainer">
+        <!-- Orders will be loaded here -->
+        <div class="no-orders" id="noOrders">
+            <i class="fas fa-box-open"></i>
+            <h3>No Orders Yet</h3>
+            <p>Your orders will appear here</p>
+        </div>
+    </div>
+    
+    <!-- Footer Navigation -->
+    <div class="footer-nav">
+        <div class="nav-item" id="footerHome">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" id="footerSearch">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+        </div>
+        <div class="nav-item active" id="footerOrders">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Orders</span>
+        </div>
+        <div class="nav-item" id="footerWishlist">
+            <i class="fas fa-heart"></i>
+            <span>Wishlist</span>
+        </div>
+        <div class="nav-item" id="footerAccount">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOlLzr0liPHXEssNXSpY8XozoYPPEeA60",
+            authDomain: "rr-mobile-accessories.firebaseapp.com",
+            databaseURL: "https://rr-mobile-accessories-default-rtdb.firebaseio.com",
+            projectId: "rr-mobile-accessories",
+            storageBucket: "rr-mobile-accessories.appspot.com",
+            messagingSenderId: "261034064103",
+            appId: "1:261034064103:web:b59fbb7118dd7f93868a42",
+            measurementId: "G-28RJEQ3X7H"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // DOM Elements
+        const ordersContainer = document.getElementById('ordersContainer');
+        const noOrders = document.getElementById('noOrders');
+        
+        // Navigation elements
+        const footerHome = document.getElementById('footerHome');
+        const footerSearch = document.getElementById('footerSearch');
+        const footerOrders = document.getElementById('footerOrders');
+        const footerWishlist = document.getElementById('footerWishlist');
+        const footerAccount = document.getElementById('footerAccount');
+        
+        // Check authentication and load orders
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                loadOrders(user.uid);
+            }
+        });
+        
+        // Load orders from Firebase
+        function loadOrders(userId) {
+            database.ref('orders').orderByChild('userId').equalTo(userId).on('value', (snapshot) => {
+                ordersContainer.innerHTML = '';
+                noOrders.style.display = 'block';
+                
+                snapshot.forEach((childSnapshot) => {
+                    noOrders.style.display = 'none';
+                    const order = childSnapshot.val();
+                    order.id = childSnapshot.key;
+                    
+                    // Create order card
+                    const orderCard = document.createElement('div');
+                    orderCard.className = 'order-card';
+                    
+                    // Format date
+                    const orderDate = new Date(order.createdAt);
+                    const formattedDate = orderDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    // Status class
+                    let statusClass = 'status-pending';
+                    if (order.status === 'delivered') {
+                        statusClass = 'status-delivered';
+                    } else if (order.status === 'cancelled') {
+                        statusClass = 'status-cancelled';
+                    }
+                    
+                    orderCard.innerHTML = `
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Order #${order.id.substring(0, 8)}</div>
+                                <div class="order-date">${formattedDate}</div>
+                            </div>
+                            <div class="order-status ${statusClass}">${order.status}</div>
+                        </div>
+                        <div class="order-product">
+                            <div class="product-image">
+                                <img src="${order.productImage}" alt="${order.productTitle}">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">${order.productTitle}</div>
+                                <div class="product-price">₹${order.price}</div>
+                                <div class="product-quantity">Qty: ${order.quantity}</div>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <div class="order-total">Total: ₹${order.total}</div>
+                            <div class="order-actions">
+                                ${order.status === 'pending' ? `<button class="btn btn-danger" data-order-id="${order.id}">Cancel</button>` : ''}
+                                <button class="btn btn-outline" data-order-id="${order.id}">Details</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    ordersContainer.appendChild(orderCard);
+                });
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.btn-danger').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const orderId = e.target.getAttribute('data-order-id');
+                        cancelOrder(orderId);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-outline').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const orderId = e.target.getAttribute('data-order-id');
+                        viewOrderDetails(orderId);
+                    });
+                });
+            });
+        }
+        
+        // Cancel order
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                database.ref('orders/' + orderId).update({
+                    status: 'cancelled',
+                    cancelledAt: firebase.database.ServerValue.TIMESTAMP
+                })
+                .then(() => {
+                    alert('Order cancelled successfully');
+                })
+                .catch((error) => {
+                    alert('Error cancelling order: ' + error.message);
+                });
+            }
+        }
+        
+        // View order details
+        function viewOrderDetails(orderId) {
+            window.location.href = `order-details.html?orderId=${orderId}`;
+        }
+        
+        // Setup navigation
+        footerHome.addEventListener('click', () => {
+            window.location.href = 'main.html';
+        });
+        
+        footerSearch.addEventListener('click', () => {
+            window.location.href = 'search.html';
+        });
+        
+        footerOrders.addEventListener('click', () => {
+            window.location.href = 'orders.html';
+        });
+        
+        footerWishlist.addEventListener('click', () => {
+            window.location.href = 'wishlist.html';
+        });
+        
+        footerAccount.addEventListener('click', () => {
+            window.location.href = 'profile.html';
+        });
+    </script>
+</body>
+</html>
