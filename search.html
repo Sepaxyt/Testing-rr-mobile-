@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Products - RR MOBILE ACCESSORIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding-bottom: 80px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #0f2027, #203a43);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 30px;
+            padding: 8px 15px;
+            margin-top: 10px;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 8px;
+            font-size: 1rem;
+        }
+        
+        .search-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .main-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: var(--dark);
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-card-image {
+            height: 150px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .product-card-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .product-card-details {
+            padding: 10px;
+        }
+        
+        .product-card-title {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-card-price {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+        
+        .product-card-original-price {
+            font-size: 0.8rem;
+            color: var(--gray);
+            text-decoration: line-through;
+            margin-right: 5px;
+        }
+        
+        .product-card-discount {
+            font-size: 0.7rem;
+            color: white;
+            background: var(--success);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display: flex; align-items: center;">
+            <a href="main.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div style="flex: 1;">
+                <div class="brand-name" style="font-size: 1.2rem;">Search Products</div>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search for products...">
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="section-title">Search Results</div>
+        <div id="searchResultsContainer">
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>Search for products</h3>
+                <p>Type in the search box to find products</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-nav">
+        <div class="nav-item" id="footerHome">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item active" id="footerSearch">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+        </div>
+        <div class="nav-item" id="footerCart">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Cart</span>
+        </div>
+        <div class="nav-item" id="footerAccount">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOlLzr0liPHXEssNXSpY8XozoYPPEeA60",
+            authDomain: "rr-mobile-accessories.firebaseapp.com",
+            databaseURL: "https://rr-mobile-accessories-default-rtdb.firebaseio.com",
+            projectId: "rr-mobile-accessories",
+            storageBucket: "rr-mobile-accessories.appspot.com",
+            messagingSenderId: "261034064103",
+            appId: "1:261034064103:web:b59fbb7118dd7f93868a42",
+            measurementId: "G-28RJEQ3X7H"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+        
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchResultsContainer = document.getElementById('searchResultsContainer');
+        
+        // Search function
+        function searchProducts(searchTerm) {
+            if (searchTerm.trim() === '') {
+                searchResultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>Search for products</h3>
+                        <p>Type in the search box to find products</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            searchResultsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Searching...</div>';
+            
+            // Search across all product categories
+            const categories = ['headphones', 'covers', 'chargers', 'powerbanks', 'speakers'];
+            let allProducts = [];
+            let completedSearches = 0;
+            
+            categories.forEach(category => {
+                database.ref('products').orderByChild('category').equalTo(category).once('value')
+                    .then(snapshot => {
+                        if (snapshot.exists()) {
+                            snapshot.forEach(childSnapshot => {
+                                const product = childSnapshot.val();
+                                product.id = childSnapshot.key;
+                                product.category = category;
+                                allProducts.push(product);
+                            });
+                        }
+                        
+                        completedSearches++;
+                        
+                        // When all categories are searched
+                        if (completedSearches === categories.length) {
+                            displaySearchResults(allProducts, searchTerm.toLowerCase());
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error searching products:', error);
+                        completedSearches++;
+                        
+                        if (completedSearches === categories.length) {
+                            displaySearchResults(allProducts, searchTerm.toLowerCase());
+                        }
+                    });
+            });
+        }
+        
+        // Display search results
+        function displaySearchResults(products, searchTerm) {
+            if (products.length === 0) {
+                searchResultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No products found</h3>
+                        <p>Try different search terms</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Filter products based on search term
+            const filteredProducts = products.filter(product => 
+                product.title.toLowerCase().includes(searchTerm) || 
+                product.brand.toLowerCase().includes(searchTerm) ||
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            
+            if (filteredProducts.length === 0) {
+                searchResultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No products found</h3>
+                        <p>Try different search terms</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Display filtered products
+            searchResultsContainer.innerHTML = `
+                <div class="product-grid" id="productsGrid"></div>
+            `;
+            
+            const productsGrid = document.getElementById('productsGrid');
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => {
+                    window.location.href = `${product.category}.html?id=${product.id}`;
+                };
+                
+                let priceHtml = `₹${product.price.toLocaleString('en-IN')}`;
+                if (product.originalPrice) {
+                    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+                    priceHtml = `
+                        <span class="product-card-original-price">₹${product.originalPrice.toLocaleString('en-IN')}</span>
+                        ₹${product.price.toLocaleString('en-IN')}
+                        <span class="product-card-discount">${discount}% off</span>
+                    `;
+                }
+                
+                productCard.innerHTML = `
+                    <div class="product-card-image">
+                        <img src="${product.image}" alt="${product.title}">
+                    </div>
+                    <div class="product-card-details">
+                        <div class="product-card-title">${product.title}</div>
+                        <div class="product-card-price">${priceHtml}</div>
+                    </div>
+                `;
+                
+                productsGrid.appendChild(productCard);
+            });
+        }
+        
+        // Event listeners
+        searchBtn.addEventListener('click', () => {
+            searchProducts(searchInput.value);
+        });
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchProducts(searchInput.value);
+            }
+        });
+        
+        // Navigation
+        document.getElementById('footerHome').addEventListener('click', () => {
+            window.location.href = 'main.html';
+        });
+        
+        document.getElementById('footerSearch').addEventListener('click', () => {
+            window.location.href = 'search.html';
+        });
+        
+        document.getElementById('footerCart').addEventListener('click', () => {
+            window.location.href = 'cart.html';
+        });
+        
+        document.getElementById('footerAccount').addEventListener('click', () => {
+            window.location.href = 'profile.html';
+        });
+    </script>
+</body>
+</html>
