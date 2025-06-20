@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - RR MOBILE ACCESSORIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #0f2027, #203a43);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .brand-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+        
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .contact-info {
+            margin-bottom: 30px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .info-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .info-content p {
+            color: var(--gray);
+        }
+        
+        .contact-form {
+            margin-top: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: var(--secondary);
+        }
+        
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .contact-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="main.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="logo-container">
+            <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="RR Logo" class="logo">
+            <div class="brand-name">Contact Us</div>
+        </div>
+        <div style="width: 40px;"></div> <!-- For alignment -->
+    </header>
+    
+    <div class="contact-container">
+        <h1 class="page-title">Get In Touch</h1>
+        
+        <div class="contact-info">
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-content">
+                    <h3>Our Address</h3>
+                    <p>123 Mobile Street, Tech City, India - 143001</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="info-content">
+                    <h3>Call Us</h3>
+                    <p>+91 9876543210</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="info-content">
+                    <h3>Email Us</h3>
+                    <p>support@rrmobile.com</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-form">
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Your Message</label>
+                    <textarea id="message" required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="footer-nav">
+        <div class="nav-item" id="footerHome">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" id="footerSearch">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+        </div>
+        <div class="nav-item" id="footerOrders">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Orders</span>
+        </div>
+        <div class="nav-item" id="footerWishlist">
+            <i class="fas fa-heart"></i>
+            <span>Wishlist</span>
+        </div>
+        <div class="nav-item" id="footerAccount">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </div>
+    </div>
+    
+    <script>
+        // Handle form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will contact you soon.');
+            this.reset();
+        });
+        
+        // Navigation
+        document.getElementById('footerHome').addEventListener('click', () => {
+            window.location.href = 'main.html';
+        });
+        
+        document.getElementById('footerSearch').addEventListener('click', () => {
+            window.location.href = 'search.html';
+        });
+        
+        document.getElementById('footerOrders').addEventListener('click', () => {
+            window.location.href = 'orders.html';
+        });
+        
+        document.getElementById('footerWishlist').addEventListener('click', () => {
+            window.location.href = 'wishlist.html';
+        });
+        
+        document.getElementById('footerAccount').addEventListener('click', () => {
+            window.location.href = 'profile.html';
+        });
+    </script>
+</body>
+</html>
