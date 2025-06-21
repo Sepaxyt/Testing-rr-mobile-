@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop by Category - RR MOBILE ACCESSORIES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,469 +14,443 @@
         }
         
         body {
-            background-color: #f1f3f6;
+            background-color: #f5f5f7;
+            color: #333;
         }
         
-        .header {
-            background: #2874f0;
-            padding: 12px 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .container {
+        .header-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        .header-content {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            padding: 0 20px;
         }
         
         .logo {
-            color: white;
-            font-size: 22px;
-            font-weight: 600;
-            text-decoration: none;
-            margin-right: 30px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff6b6b;
         }
         
         .logo span {
-            font-style: italic;
-            font-weight: 500;
-            font-size: 11px;
-            position: relative;
-            top: -3px;
-            margin-left: 3px;
+            color: white;
         }
         
-        .logo span:before {
-            content: '✓';
-            margin-right: 2px;
-        }
-        
-        .search-bar {
-            flex-grow: 1;
-            display: flex;
-            margin-right: 20px;
-        }
-        
-        .search-bar input {
-            width: 100%;
-            padding: 10px 15px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-        }
-        
-        .search-bar button {
-            background: white;
-            border: none;
-            padding: 0 20px;
-            cursor: pointer;
-            color: #2874f0;
-        }
-        
-        .nav-links {
+        nav ul {
             display: flex;
             list-style: none;
         }
         
-        .nav-links li {
+        nav ul li {
             margin-left: 25px;
         }
         
-        .nav-links a {
+        nav ul li a {
             color: white;
             text-decoration: none;
-            font-size: 16px;
             font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #ff6b6b;
+        }
+        
+        .search-cart {
             display: flex;
-            flex-direction: column;
             align-items: center;
         }
         
-        .nav-links a small {
-            font-size: 12px;
-            font-weight: 400;
+        .search-box {
+            position: relative;
+            margin-right: 20px;
+        }
+        
+        .search-box input {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            width: 200px;
+            padding-right: 35px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        
+        .cart-icon {
+            color: white;
+            font-size: 1.2rem;
+            position: relative;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
         }
         
         .categories-container {
-            padding: 20px 0;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         .page-title {
-            background: white;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #212121;
-            font-weight: 500;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            text-align: center;
+            position: relative;
+        }
+        
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #ff6b6b;
+            margin: 10px auto;
         }
         
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
         }
         
         .category-card {
             background: white;
-            padding: 15px 0;
-            text-align: center;
-            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
-            transition: box-shadow 0.2s;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            height: 220px;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         
         .category-card:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         
         .category-image {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 10px;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .category-card:hover .category-image {
+            transform: scale(1.05);
+        }
+        
+        .category-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+            color: white;
         }
         
         .category-title {
-            font-size: 14px;
-            color: #212121;
-            font-weight: 500;
-            padding: 0 10px;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
         
         .category-count {
-            font-size: 12px;
-            color: #878787;
-            margin-top: 5px;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
         }
         
-        .footer {
-            background: #172337;
-            color: white;
-            padding: 30px 0 10px;
-            margin-top: 30px;
+        .category-count i {
+            margin-right: 8px;
+            font-size: 0.8rem;
         }
         
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+        .featured-brands {
+            margin-top: 50px;
+            padding: 30px 0;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+        }
+        
+        .brands-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
             gap: 30px;
+            padding: 0 20px;
+        }
+        
+        .brand-logo {
+            height: 50px;
+            filter: grayscale(100%);
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+        
+        .brand-logo:hover {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+        
+        footer {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
         }
         
         .footer-column h3 {
-            font-size: 14px;
-            color: #878787;
-            margin-bottom: 15px;
-            text-transform: uppercase;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #ff6b6b;
         }
         
-        .footer-links {
+        .footer-column ul {
             list-style: none;
         }
         
-        .footer-links li {
+        .footer-column ul li {
             margin-bottom: 10px;
         }
         
-        .footer-links a {
-            color: white;
+        .footer-column ul li a {
+            color: #ccc;
             text-decoration: none;
-            font-size: 12px;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: #ff6b6b;
         }
         
         .copyright {
-            border-top: 1px solid #454d5e;
-            padding-top: 15px;
-            margin-top: 30px;
             text-align: center;
-            font-size: 12px;
-            color: #878787;
-        }
-        
-        @media (max-width: 992px) {
-            .categories-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #888;
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
-            .header-content {
-                flex-wrap: wrap;
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
             }
             
-            .search-bar {
-                order: 3;
-                width: 100%;
-                margin: 15px 0;
+            nav ul {
+                margin-top: 15px;
+            }
+            
+            .search-box input {
+                width: 150px;
             }
             
             .categories-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .footer-content {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .categories-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">
-                    RR MOBILE<span>Plus</span>
-                </a>
-                
-                <div class="search-bar">
-                    <input type="text" placeholder="Search for products...">
-                    <button>Search</button>
-                </div>
-                
-                <ul class="nav-links">
-                    <li>
-                        <a href="#">
-                            <span>Cart</span>
-                            <small>My Items</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span>Account</span>
-                            <small>Login</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span>More</span>
-                            <small>Options</small>
-                        </a>
-                    </li>
+    <header>
+        <div class="header-container">
+            <div class="logo">RR <span>MOBILE ACCESSORIES</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Deals</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
                 </ul>
+            </nav>
+            <div class="search-cart">
+                <div class="search-box">
+                    <input type="text" placeholder="Search products...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <a href="#" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">3</span>
+                </a>
             </div>
         </div>
     </header>
     
-    <main class="categories-container">
-        <div class="container">
-            <div class="page-title">
-                Shop by Category
-            </div>
+    <div class="categories-container">
+        <h1 class="page-title">Shop by Category</h1>
+        
+        <div class="categories-grid" id="categoriesContainer">
+            <a href="headphones.html" class="category-card">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Headphones" class="category-image">
+                <div class="category-overlay">
+                    <h2 class="category-title">Headphones</h2>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 50+ products</div>
+                </div>
+            </a>
             
-            <div class="categories-grid" id="categoriesContainer">
-                <a href="headphones.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/headphone/8/3/q/1-1-bassheads-162-boat-original-imagg9j4zzhzgqzh.jpeg" alt="Headphones" class="category-image">
-                    <div class="category-title">Headphones</div>
-                    <div class="category-count">50+ products</div>
-                </a>
-                
-                <a href="cases.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/mobile/3/5/l/-original-imaghx9qtwbnhwvy.jpeg" alt="Mobile Cases" class="category-image">
-                    <div class="category-title">Mobile Cases</div>
-                    <div class="category-count">75+ products</div>
-                </a>
-                
-                <a href="chargers.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/charger/3/6/e/-original-imagg9j2fywkhyvj.jpeg" alt="Chargers" class="category-image">
-                    <div class="category-title">Chargers</div>
-                    <div class="category-count">40+ products</div>
-                </a>
-                
-                <a href="powerbanks.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/kqse07k0/power-bank/3/j/d/10000-m20-poco-original-imag4q5zhfz9hg7h.jpeg" alt="Power Banks" class="category-image">
-                    <div class="category-title">Power Banks</div>
-                    <div class="category-count">35+ products</div>
-                </a>
-                
-                <a href="smartwatches.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/watch/z/j/k/-original-imaggbr6kzwhqzzf.jpeg" alt="Smart Watches" class="category-image">
-                    <div class="category-title">Smart Watches</div>
-                    <div class="category-count">25+ products</div>
-                </a>
-                
-                <a href="earbuds.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/headphone/n/m/a/-original-imagjyyh2g5hqtxg.jpeg" alt="Earbuds" class="category-image">
-                    <div class="category-title">Earbuds</div>
-                    <div class="category-count">45+ products</div>
-                </a>
-                
-                <a href="screenguards.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/screen-guard/7/9/q/-original-imaggbr5kfghfzms.jpeg" alt="Screen Guards" class="category-image">
-                    <div class="category-title">Screen Guards</div>
-                    <div class="category-count">30+ products</div>
-                </a>
-                
-                <a href="cables.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/data-cable/e/u/p/1m-ucb13-1m-ucb13-boat-original-imagjqyzz8zq5fns.jpeg" alt="Cables" class="category-image">
-                    <div class="category-title">Cables</div>
-                    <div class="category-count">20+ products</div>
-                </a>
-                
-                <a href="holders.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/mobile-holder-stand/5/5/q/-original-imagk8jyh5gqghvx.jpeg" alt="Mobile Holders" class="category-image">
-                    <div class="category-title">Mobile Holders</div>
-                    <div class="category-count">15+ products</div>
-                </a>
-                
-                <a href="speakers.html" class="category-card">
-                    <img src="https://rukminim2.flixcart.com/image/200/200/xif0q/speaker/mobile-tablet-speaker/v/u/d/stone-200-boat-original-imagg6v3h5zqhyqs.jpeg" alt="Speakers" class="category-image">
-                    <div class="category-title">Speakers</div>
-                    <div class="category-count">25+ products</div>
-                </a>
+            <a href="covers.html" class="category-card">
+                <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Phone Covers" class="category-image">
+                <div class="category-overlay">
+                    <h2 class="category-title">Phone Covers</h2>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 35+ products</div>
+                </div>
+            </a>
+            
+            <a href="chargers.html" class="category-card">
+                <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Chargers" class="category-image">
+                <div class="category-overlay">
+                    <h2 class="category-title">Chargers</h2>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 28+ products</div>
+                </div>
+            </a>
+            
+            <a href="powerbanks.html" class="category-card">
+                <img src="https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Power Banks" class="category-image">
+                <div class="category-overlay">
+                    <h2 class="category-title">Power Banks</h2>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 22+ products</div>
+                </div>
+            </a>
+            
+            <a href="speakers.html" class="category-card">
+                <img src="https://images.unsplash.com/photo-1558379850-823f103f866a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Speakers" class="category-image">
+                <div class="category-overlay">
+                    <h2 class="category-title">Bluetooth Speakers</h2>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 18+ products</div>
+                </div>
+            </a>
+            
+            <a href="#" class="category-card">
+                <img src="https://images.unsplash.com/photo-1546054454-aa26e2b734c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Smart Watches" class="category-image">
+                <div class="category-overlay">
+                    <h2 class="category-title">Smart Watches</h2>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 15+ products</div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="featured-brands">
+            <h2 class="section-title">Featured Brands</h2>
+            <div class="brands-container">
+                <img src="https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png" alt="Apple" class="brand-logo" style="height: 40px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Samsung_Logo.svg/2560px-Samsung_Logo.svg.png" alt="Samsung" class="brand-logo" style="height: 40px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Sony_logo.svg/1280px-Sony_logo.svg.png" alt="Sony" class="brand-logo" style="height: 40px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/JBL_logo.svg/1280px-JBL_logo.svg.png" alt="JBL" class="brand-logo" style="height: 40px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Bose_logo.svg/1280px-Bose_logo.svg.png" alt="Bose" class="brand-logo" style="height: 40px;">
             </div>
         </div>
-    </main>
+    </div>
     
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>About</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Stories</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Help</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Payments</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Returns</a></li>
-                        <li><a href="#">FAQ</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Policy</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Return Policy</a></li>
-                        <li><a href="#">Terms of Use</a></li>
-                        <li><a href="#">Security</a></li>
-                        <li><a href="#">Privacy</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Social</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Facebook</a></li>
-                        <li><a href="#">Twitter</a></li>
-                        <li><a href="#">Instagram</a></li>
-                        <li><a href="#">YouTube</a></li>
-                    </ul>
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Shop</h3>
+                <ul>
+                    <li><a href="headphones.html">Headphones</a></li>
+                    <li><a href="covers.html">Phone Covers</a></li>
+                    <li><a href="chargers.html">Chargers</a></li>
+                    <li><a href="powerbanks.html">Power Banks</a></li>
+                    <li><a href="speakers.html">Speakers</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns & Exchanges</a></li>
+                    <li><a href="#">Payment Options</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Connect With Us</h3>
+                <p>Subscribe to our newsletter for the latest updates and offers.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
-            
-            <div class="copyright">
-                © 2023 RR Mobile Accessories. All rights reserved.
-            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 RR MOBILE ACCESSORIES. All Rights Reserved.
         </div>
     </footer>
-    
-    <script>
-        // Sample data loading function
-        function loadCategories() {
-            // In a real implementation, you would fetch this from your database
-            const categories = [
-                {
-                    id: "headphones",
-                    name: "Headphones",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/headphone/8/3/q/1-1-bassheads-162-boat-original-imagg9j4zzhzgqzh.jpeg",
-                    count: "50+ products"
-                },
-                {
-                    id: "cases",
-                    name: "Mobile Cases",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/mobile/3/5/l/-original-imaghx9qtwbnhwvy.jpeg",
-                    count: "75+ products"
-                },
-                {
-                    id: "chargers",
-                    name: "Chargers",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/charger/3/6/e/-original-imagg9j2fywkhyvj.jpeg",
-                    count: "40+ products"
-                },
-                {
-                    id: "powerbanks",
-                    name: "Power Banks",
-                    image: "https://rukminim2.flixcart.com/image/200/200/kqse07k0/power-bank/3/j/d/10000-m20-poco-original-imag4q5zhfz9hg7h.jpeg",
-                    count: "35+ products"
-                },
-                {
-                    id: "smartwatches",
-                    name: "Smart Watches",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/watch/z/j/k/-original-imaggbr6kzwhqzzf.jpeg",
-                    count: "25+ products"
-                },
-                {
-                    id: "earbuds",
-                    name: "Earbuds",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/headphone/n/m/a/-original-imagjyyh2g5hqtxg.jpeg",
-                    count: "45+ products"
-                },
-                {
-                    id: "screenguards",
-                    name: "Screen Guards",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/screen-guard/7/9/q/-original-imaggbr5kfghfzms.jpeg",
-                    count: "30+ products"
-                },
-                {
-                    id: "cables",
-                    name: "Cables",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/data-cable/e/u/p/1m-ucb13-1m-ucb13-boat-original-imagjqyzz8zq5fns.jpeg",
-                    count: "20+ products"
-                },
-                {
-                    id: "holders",
-                    name: "Mobile Holders",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/mobile-holder-stand/5/5/q/-original-imagk8jyh5gqghvx.jpeg",
-                    count: "15+ products"
-                },
-                {
-                    id: "speakers",
-                    name: "Speakers",
-                    image: "https://rukminim2.flixcart.com/image/200/200/xif0q/speaker/mobile-tablet-speaker/v/u/d/stone-200-boat-original-imagg6v3h5zqhyqs.jpeg",
-                    count: "25+ products"
-                }
-            ];
-            
-            const container = document.getElementById('categoriesContainer');
-            
-            // Clear existing content (if any)
-            container.innerHTML = '';
-            
-            // Add each category card
-            categories.forEach(category => {
-                const card = document.createElement('a');
-                card.href = `${category.id}.html`;
-                card.className = 'category-card';
-                card.innerHTML = `
-                    <img src="${category.image}" alt="${category.name}" class="category-image">
-                    <div class="category-title">${category.name}</div>
-                    <div class="category-count">${category.count}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-        
-        // Load categories when page loads
-        document.addEventListener('DOMContentLoaded', loadCategories);
-    </script>
 </body>
 </html>
