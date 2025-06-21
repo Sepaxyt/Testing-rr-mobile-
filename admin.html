@@ -85,7 +85,6 @@
             cursor: pointer;
             transition: all 0.2s;
             color: rgba(255, 255, 255, 0.8);
-            position: relative;
         }
         
         .menu-item:hover, .menu-item.active {
@@ -98,17 +97,6 @@
             font-size: 1.1rem;
             width: 20px;
             text-align: center;
-        }
-        
-        .menu-badge {
-            position: absolute;
-            right: 20px;
-            background: var(--danger);
-            color: white;
-            border-radius: 10px;
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            font-weight: 500;
         }
         
         /* Main Content */
@@ -214,8 +202,8 @@
         }
         
         .card-icon.messages {
-            background: rgba(63, 55, 201, 0.1);
-            color: var(--secondary);
+            background: rgba(106, 76, 147, 0.1);
+            color: #6a4c93;
         }
         
         .card-value {
@@ -282,6 +270,11 @@
             color: white;
         }
         
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -328,13 +321,18 @@
         }
         
         .status.unread {
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--danger);
+        }
+        
+        .status.read {
             background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
         }
         
-        .status.read {
-            background: rgba(108, 117, 125, 0.1);
-            color: var(--gray);
+        .status.replied {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
         }
         
         .action-btn {
@@ -343,74 +341,30 @@
             font-size: 0.8rem;
             cursor: pointer;
             margin-right: 5px;
-            border: none;
         }
         
         .action-btn.view {
             background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
+            border: none;
         }
         
         .action-btn.edit {
             background: rgba(248, 149, 30, 0.1);
             color: var(--warning);
+            border: none;
         }
         
         .action-btn.delete {
             background: rgba(247, 37, 133, 0.1);
             color: var(--danger);
+            border: none;
         }
         
         .action-btn.reply {
             background: rgba(76, 201, 240, 0.1);
             color: var(--success);
-        }
-        
-        /* Message Thread Styles */
-        .message-thread {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-        }
-        
-        .message-item {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 8px;
-            background: #f9f9f9;
-        }
-        
-        .message-item.admin {
-            background: rgba(67, 97, 238, 0.1);
-            border-left: 3px solid var(--primary);
-        }
-        
-        .message-item.user {
-            background: rgba(108, 117, 125, 0.1);
-            border-left: 3px solid var(--gray);
-        }
-        
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .message-sender {
-            font-weight: 600;
-        }
-        
-        .message-time {
-            color: var(--gray);
-            font-size: 0.8rem;
-        }
-        
-        .message-content {
-            line-height: 1.5;
+            border: none;
         }
         
         /* Form Styles */
@@ -545,6 +499,54 @@
             gap: 10px;
         }
         
+        /* Message Styles */
+        .message-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .message.user {
+            background-color: #f0f7ff;
+            margin-right: 20%;
+            border: 1px solid #d0e3ff;
+        }
+        
+        .message.admin {
+            background-color: #f0fff0;
+            margin-left: 20%;
+            border: 1px solid #d0ffd0;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+        }
+        
+        .message-time {
+            color: var(--gray);
+        }
+        
+        .message-content {
+            font-size: 0.9rem;
+        }
+        
         /* Responsive */
         @media (max-width: 1200px) {
             .dashboard-cards {
@@ -619,7 +621,6 @@
                 <div class="menu-item" id="messagesBtn">
                     <i class="fas fa-envelope"></i>
                     <span>Messages</span>
-                    <span class="menu-badge" id="unreadMessagesBadge">0</span>
                 </div>
                 
                 <div class="menu-title">Settings</div>
@@ -687,13 +688,24 @@
                     
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Total Messages</div>
+                            <div class="card-title">Total Revenue</div>
+                            <div class="card-icon revenue">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="totalRevenue">₹0</div>
+                        <div class="card-footer">+20% from last month</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Unread Messages</div>
                             <div class="card-icon messages">
                                 <i class="fas fa-envelope"></i>
                             </div>
                         </div>
-                        <div class="card-value" id="totalMessages">0</div>
-                        <div class="card-footer"><span id="unreadMessagesCount">0</span> unread</div>
+                        <div class="card-value" id="unreadMessages">0</div>
+                        <div class="card-footer">New messages from users</div>
                     </div>
                 </div>
                 
@@ -724,25 +736,25 @@
                 
                 <div class="table-container">
                     <div class="table-header">
-                        <div class="table-title">Recent Messages</div>
+                        <div class="table-title">Recent Products</div>
                         <div class="table-actions">
-                            <button class="btn btn-outline">View All</button>
+                            <button class="btn btn-primary" id="addProductBtn">Add Product</button>
                         </div>
                     </div>
                     
-                    <table id="recentMessagesTable">
+                    <table id="recentProductsTable">
                         <thead>
                             <tr>
-                                <th>User</th>
-                                <th>Message</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Rating</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Messages will be loaded here -->
+                            <!-- Products will be loaded here -->
                         </tbody>
                     </table>
                 </div>
@@ -750,22 +762,162 @@
             
             <!-- Products Section -->
             <div id="productsSection" style="display: none;">
-                <!-- Products content remains the same -->
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1>Products Management</h1>
+                    </div>
+                    <div class="admin-user">
+                        <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="Admin">
+                        <div class="admin-user-info">
+                            <h4>Admin User</h4>
+                            <p>Super Admin</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">All Products</div>
+                        <div class="table-actions">
+                            <button class="btn btn-primary" id="addNewProductBtn">Add New Product</button>
+                        </div>
+                    </div>
+                    
+                    <table id="allProductsTable">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Rating</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- All products will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
             <!-- Categories Section -->
             <div id="categoriesSection" style="display: none;">
-                <!-- Categories content remains the same -->
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1>Categories Management</h1>
+                    </div>
+                    <div class="admin-user">
+                        <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="Admin">
+                        <div class="admin-user-info">
+                            <h4>Admin User</h4>
+                            <p>Super Admin</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">All Categories</div>
+                        <div class="table-actions">
+                            <button class="btn btn-primary" id="addCategoryBtn">Add Category</button>
+                        </div>
+                    </div>
+                    
+                    <table id="categoriesTable">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Products</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Categories will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
             <!-- Orders Section -->
             <div id="ordersSection" style="display: none;">
-                <!-- Orders content remains the same -->
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1>Orders Management</h1>
+                    </div>
+                    <div class="admin-user">
+                        <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="Admin">
+                        <div class="admin-user-info">
+                            <h4>Admin User</h4>
+                            <p>Super Admin</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">All Orders</div>
+                        <div class="table-actions">
+                            <button class="btn btn-outline">Export</button>
+                        </div>
+                    </div>
+                    
+                    <table id="allOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- All orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
             <!-- Users Section -->
             <div id="usersSection" style="display: none;">
-                <!-- Users content remains the same -->
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1>Users Management</h1>
+                    </div>
+                    <div class="admin-user">
+                        <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="Admin">
+                        <div class="admin-user-info">
+                            <h4>Admin User</h4>
+                            <p>Super Admin</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">All Users</div>
+                        <div class="table-actions">
+                            <button class="btn btn-outline">Export</button>
+                        </div>
+                    </div>
+                    
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Orders</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
             <!-- Messages Section -->
@@ -787,27 +939,23 @@
                     <div class="table-header">
                         <div class="table-title">All Messages</div>
                         <div class="table-actions">
-                            <button class="btn btn-outline" id="filterAllBtn">All</button>
-                            <button class="btn btn-outline" id="filterUnreadBtn">Unread</button>
-                            <button class="btn btn-outline" id="filterPaymentBtn">Payments</button>
-                            <button class="btn btn-outline" id="filterOrderBtn">Orders</button>
-                            <button class="btn btn-outline" id="filterProblemBtn">Problems</button>
+                            <button class="btn btn-outline">Mark All as Read</button>
                         </div>
                     </div>
                     
-                    <table id="allMessagesTable">
+                    <table id="messagesTable">
                         <thead>
                             <tr>
                                 <th>User</th>
-                                <th>Message</th>
-                                <th>Type</th>
-                                <th>Status</th>
+                                <th>Subject</th>
+                                <th>Last Message</th>
                                 <th>Date</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- All messages will be loaded here -->
+                            <!-- Messages will be loaded here -->
                         </tbody>
                     </table>
                 </div>
@@ -815,48 +963,264 @@
             
             <!-- Settings Section -->
             <div id="settingsSection" style="display: none;">
-                <!-- Settings content remains the same -->
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1>Settings</h1>
+                    </div>
+                    <div class="admin-user">
+                        <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="Admin">
+                        <div class="admin-user-info">
+                            <h4>Admin User</h4>
+                            <p>Super Admin</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-container">
+                    <div class="form-title">Store Settings</div>
+                    <form id="storeSettingsForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Store Name</label>
+                                <input type="text" class="form-control" id="storeName" value="RR Mobile Accessories">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Store Logo URL</label>
+                                <input type="text" class="form-control" id="storeLogo" value="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Store Description</label>
+                            <textarea class="form-control" id="storeDescription">Your one-stop shop for all mobile accessories</textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Contact Email</label>
+                                <input type="email" class="form-control" id="contactEmail" value="contact@rrmobile.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact Phone</label>
+                                <input type="text" class="form-control" id="contactPhone" value="+91 9876543210">
+                            </div>
+                        </div>
+                        
+                        <div class="form-footer">
+                            <button type="button" class="btn btn-outline">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="form-container">
+                    <div class="form-title">Admin Profile</div>
+                    <form id="adminProfileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="adminName" value="Admin User">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="adminEmail" value="admin@rrmobile.com" disabled>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Profile Image URL</label>
+                                <input type="text" class="form-control" id="adminImage" value="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="adminPhone" value="+91 9876543210">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Change Password</label>
+                            <input type="password" class="form-control" id="adminPassword" placeholder="Enter new password">
+                        </div>
+                        
+                        <div class="form-footer">
+                            <button type="button" class="btn btn-outline">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Message Thread Modal -->
-    <div class="modal-overlay" id="messageThreadModal">
+    <!-- Add Product Modal -->
+    <div class="modal-overlay" id="productModal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">Message Thread</div>
+                <div class="modal-title">Add New Product</div>
                 <div class="modal-close">&times;</div>
             </div>
             <div class="modal-body">
-                <div id="messageThreadContent">
-                    <div class="message-user-info">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <img id="messageUserImage" src="" alt="User" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
-                            <div>
-                                <h3 id="messageUserName" style="margin-bottom: 5px;"></h3>
-                                <div style="display: flex; gap: 10px;">
-                                    <span id="messageUserEmail" style="font-size: 0.9rem; color: var(--gray);"></span>
-                                    <span id="messageUserPhone" style="font-size: 0.9rem; color: var(--gray);"></span>
-                                </div>
-                            </div>
+                <form id="productForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-control" id="productCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="headphones">Headphones</option>
+                                <option value="covers">Mobile Covers</option>
+                                <option value="chargers">Chargers</option>
+                                <option value="powerbanks">Power Banks</option>
+                                <option value="speakers">Speakers</option>
+                            </select>
                         </div>
                     </div>
                     
-                    <div class="message-thread" id="messageThread">
-                        <!-- Messages will be loaded here -->
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="productDescription" required></textarea>
                     </div>
                     
-                    <form id="replyMessageForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Price (₹)</label>
+                            <input type="number" class="form-control" id="productPrice" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Original Price (₹)</label>
+                            <input type="number" class="form-control" id="productOriginalPrice">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Discount (%)</label>
+                            <input type="number" class="form-control" id="productDiscount">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="productStock" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Brand</label>
+                            <input type="text" class="form-control" id="productBrand">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Image URL</label>
+                        <input type="text" class="form-control" id="productImage" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Rating (1-5)</label>
+                            <input type="number" class="form-control" id="productRating" min="1" max="5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rating Count</label>
+                            <input type="number" class="form-control" id="productRatingCount">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Additional Features (JSON)</label>
+                        <textarea class="form-control" id="productFeatures" placeholder='{"colors": ["Black", "Blue"], "battery": "20 hours"}'></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelProductBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveProductBtn">Save Product</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Category Modal -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Add New Category</div>
+                <div class="modal-close">&times;</div>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="categoryName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category ID (slug)</label>
+                            <input type="text" class="form-control" id="categoryId" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Icon Class (Font Awesome)</label>
+                        <input type="text" class="form-control" id="categoryIcon" placeholder="fas fa-headphones" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Image URL</label>
+                        <input type="text" class="form-control" id="categoryImage" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelCategoryBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveCategoryBtn">Save Category</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Order Details</div>
+                <div class="modal-close">&times;</div>
+            </div>
+            <div class="modal-body">
+                <div id="orderDetailsContent">
+                    <!-- Order details will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="closeOrderBtn">Close</button>
+                <button class="btn btn-primary" id="updateOrderBtn">Update Status</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Details Modal -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Message Conversation</div>
+                <div class="modal-close">&times;</div>
+            </div>
+            <div class="modal-body">
+                <div id="messageDetailsContent">
+                    <!-- Message details will be loaded here -->
+                </div>
+                
+                <div class="form-container" style="margin-top: 20px;">
+                    <form id="replyForm">
                         <div class="form-group">
                             <label class="form-label">Your Reply</label>
-                            <textarea class="form-control" id="replyMessage" required></textarea>
-                        </div>
-                        <div class="form-footer">
-                            <button type="button" class="btn btn-outline" id="closeMessageThreadBtn">Close</button>
-                            <button type="submit" class="btn btn-primary">Send Reply</button>
+                            <textarea class="form-control" id="replyMessage" required placeholder="Type your reply here..."></textarea>
                         </div>
                     </form>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="closeMessageBtn">Close</button>
+                <button class="btn btn-success" id="sendReplyBtn">Send Reply</button>
             </div>
         </div>
     </div>
@@ -902,30 +1266,51 @@
         const messagesSection = document.getElementById('messagesSection');
         const settingsSection = document.getElementById('settingsSection');
         
-        const unreadMessagesBadge = document.getElementById('unreadMessagesBadge');
-        const unreadMessagesCount = document.getElementById('unreadMessagesCount');
-        const totalMessages = document.getElementById('totalMessages');
+        const addProductBtn = document.getElementById('addProductBtn');
+        const addNewProductBtn = document.getElementById('addNewProductBtn');
+        const addCategoryBtn = document.getElementById('addCategoryBtn');
         
-        const recentMessagesTable = document.getElementById('recentMessagesTable').getElementsByTagName('tbody')[0];
-        const allMessagesTable = document.getElementById('allMessagesTable').getElementsByTagName('tbody')[0];
+        const productModal = document.getElementById('productModal');
+        const categoryModal = document.getElementById('categoryModal');
+        const orderModal = document.getElementById('orderModal');
+        const messageModal = document.getElementById('messageModal');
         
-        const messageThreadModal = document.getElementById('messageThreadModal');
-        const messageThread = document.getElementById('messageThread');
-        const replyMessageForm = document.getElementById('replyMessageForm');
-        const closeMessageThreadBtn = document.getElementById('closeMessageThreadBtn');
+        const productForm = document.getElementById('productForm');
+        const categoryForm = document.getElementById('categoryForm');
+        const replyForm = document.getElementById('replyForm');
         
-        const filterAllBtn = document.getElementById('filterAllBtn');
-        const filterUnreadBtn = document.getElementById('filterUnreadBtn');
-        const filterPaymentBtn = document.getElementById('filterPaymentBtn');
-        const filterOrderBtn = document.getElementById('filterOrderBtn');
-        const filterProblemBtn = document.getElementById('filterProblemBtn');
+        const saveProductBtn = document.getElementById('saveProductBtn');
+        const cancelProductBtn = document.getElementById('cancelProductBtn');
+        const saveCategoryBtn = document.getElementById('saveCategoryBtn');
+        const cancelCategoryBtn = document.getElementById('cancelCategoryBtn');
+        const closeOrderBtn = document.getElementById('closeOrderBtn');
+        const updateOrderBtn = document.getElementById('updateOrderBtn');
+        const closeMessageBtn = document.getElementById('closeMessageBtn');
+        const sendReplyBtn = document.getElementById('sendReplyBtn');
+        
+        const recentOrdersTable = document.getElementById('recentOrdersTable').getElementsByTagName('tbody')[0];
+        const recentProductsTable = document.getElementById('recentProductsTable').getElementsByTagName('tbody')[0];
+        const allProductsTable = document.getElementById('allProductsTable').getElementsByTagName('tbody')[0];
+        const categoriesTable = document.getElementById('categoriesTable').getElementsByTagName('tbody')[0];
+        const allOrdersTable = document.getElementById('allOrdersTable').getElementsByTagName('tbody')[0];
+        const usersTable = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+        const messagesTable = document.getElementById('messagesTable').getElementsByTagName('tbody')[0];
+        
+        const totalUsers = document.getElementById('totalUsers');
+        const totalProducts = document.getElementById('totalProducts');
+        const totalOrders = document.getElementById('totalOrders');
+        const totalRevenue = document.getElementById('totalRevenue');
+        const unreadMessages = document.getElementById('unreadMessages');
         
         // Global variables
         let currentUser = null;
-        let messages = [];
+        let products = [];
+        let categories = [];
+        let orders = [];
         let users = [];
+        let messages = [];
+        let currentOrder = null;
         let currentMessageThread = null;
-        let currentMessageUser = null;
         
         // Initialize the admin panel
         document.addEventListener('DOMContentLoaded', () => {
@@ -945,63 +1330,257 @@
         
         // Load all data from Firebase
         function loadData() {
+            // Load products
+            database.ref('products').on('value', (snapshot) => {
+                products = [];
+                recentProductsTable.innerHTML = '';
+                allProductsTable.innerHTML = '';
+                
+                snapshot.forEach((childSnapshot) => {
+                    const product = childSnapshot.val();
+                    product.id = childSnapshot.key;
+                    products.push(product);
+                    
+                    // Add to recent products table (first 5)
+                    if (recentProductsTable.rows.length < 5) {
+                        addProductToTable(product, recentProductsTable);
+                    }
+                    
+                    // Add to all products table
+                    addProductToTable(product, allProductsTable);
+                });
+                
+                totalProducts.textContent = products.length;
+            });
+            
+            // Load categories
+            database.ref('categories').on('value', (snapshot) => {
+                categories = [];
+                categoriesTable.innerHTML = '';
+                
+                snapshot.forEach((childSnapshot) => {
+                    const category = childSnapshot.val();
+                    category.id = childSnapshot.key;
+                    categories.push(category);
+                    
+                    // Add to categories table
+                    addCategoryToTable(category);
+                });
+            });
+            
+            // Load orders
+            database.ref('orders').on('value', (snapshot) => {
+                orders = [];
+                recentOrdersTable.innerHTML = '';
+                allOrdersTable.innerHTML = '';
+                
+                snapshot.forEach((childSnapshot) => {
+                    const order = childSnapshot.val();
+                    order.id = childSnapshot.key;
+                    orders.push(order);
+                    
+                    // Add to recent orders table (first 5)
+                    if (recentOrdersTable.rows.length < 5) {
+                        addOrderToTable(order, recentOrdersTable);
+                    }
+                    
+                    // Add to all orders table
+                    addOrderToTable(order, allOrdersTable);
+                });
+                
+                totalOrders.textContent = orders.length;
+                
+                // Calculate total revenue
+                const revenue = orders.reduce((total, order) => total + (order.total || 0), 0);
+                totalRevenue.textContent = `₹${revenue.toLocaleString()}`;
+            });
+            
             // Load users
             database.ref('users').on('value', (snapshot) => {
                 users = [];
+                usersTable.innerHTML = '';
+                
                 snapshot.forEach((childSnapshot) => {
                     const user = childSnapshot.val();
                     user.id = childSnapshot.key;
                     users.push(user);
+                    
+                    // Add to users table
+                    addUserToTable(user);
                 });
                 
-                document.getElementById('totalUsers').textContent = users.length;
+                totalUsers.textContent = users.length;
             });
             
             // Load messages
-            database.ref('messages').orderByChild('timestamp').on('value', (snapshot) => {
+            database.ref('messages').on('value', (snapshot) => {
                 messages = [];
-                recentMessagesTable.innerHTML = '';
-                allMessagesTable.innerHTML = '';
-                
+                messagesTable.innerHTML = '';
                 let unreadCount = 0;
-                let totalCount = 0;
                 
                 snapshot.forEach((childSnapshot) => {
-                    const message = childSnapshot.val();
-                    message.id = childSnapshot.key;
-                    messages.push(message);
+                    const messageThread = childSnapshot.val();
+                    messageThread.id = childSnapshot.key;
                     
-                    // Count unread admin messages
-                    if (message.type === 'admin' && message.status === 'unread') {
-                        unreadCount++;
+                    // Get the last message in the thread
+                    const lastMessage = messageThread.messages 
+                        ? messageThread.messages[Object.keys(messageThread.messages).pop()]
+                        : null;
+                    
+                    if (lastMessage) {
+                        const messageData = {
+                            id: messageThread.id,
+                            userId: messageThread.userId,
+                            userEmail: messageThread.userEmail,
+                            userName: messageThread.userName,
+                            subject: messageThread.subject,
+                            lastMessage: lastMessage.content,
+                            timestamp: lastMessage.timestamp,
+                            status: lastMessage.status || 'unread',
+                            isAdminReply: lastMessage.isAdminReply || false
+                        };
+                        
+                        messages.push(messageData);
+                        
+                        // Add to messages table
+                        addMessageToTable(messageData);
+                        
+                        // Count unread messages
+                        if (!messageData.isAdminReply && messageData.status === 'unread') {
+                            unreadCount++;
+                        }
                     }
-                    
-                    totalCount++;
-                    
-                    // Add to recent messages table (first 5)
-                    if (recentMessagesTable.rows.length < 5) {
-                        addMessageToTable(message, recentMessagesTable);
-                    }
-                    
-                    // Add to all messages table
-                    addMessageToTable(message, allMessagesTable);
                 });
                 
-                // Update counters
-                unreadMessagesBadge.textContent = unreadCount;
-                unreadMessagesCount.textContent = unreadCount;
-                totalMessages.textContent = totalCount;
+                unreadMessages.textContent = unreadCount;
+                
+                // Sort messages by timestamp (newest first)
+                messages.sort((a, b) => b.timestamp - a.timestamp);
             });
         }
         
-        // Add message to table
-        function addMessageToTable(message, table) {
+        // Add product to table
+        function addProductToTable(product, table) {
             const row = table.insertRow();
             
-            // Find user
-            const user = users.find(u => u.id === message.userId) || {};
+            // Product name with image
+            const productCell = row.insertCell(0);
+            productCell.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <img src="${product.image}" alt="${product.title}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;">
+                    <div>
+                        <div style="font-weight: 500;">${product.title}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${product.brand || 'No brand'}</div>
+                    </div>
+                </div>
+            `;
             
-            // User info
+            // Category
+            const categoryCell = row.insertCell(1);
+            categoryCell.textContent = product.category || '-';
+            
+            // Price
+            const priceCell = row.insertCell(2);
+            priceCell.innerHTML = `
+                <div style="font-weight: 600; color: var(--primary);">₹${product.price}</div>
+                ${product.originalPrice ? `<div style="font-size: 0.8rem; color: var(--gray); text-decoration: line-through;">₹${product.originalPrice}</div>` : ''}
+            `;
+            
+            // Stock
+            const stockCell = row.insertCell(3);
+            stockCell.textContent = product.stock || 0;
+            
+            // Rating
+            const ratingCell = row.insertCell(4);
+            ratingCell.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <div style="color: var(--warning); margin-right: 5px;">
+                        ${getRatingStars(product.rating || 0)}
+                    </div>
+                    <div>${product.ratingCount || 0}</div>
+                </div>
+            `;
+            
+            // Actions
+            const actionCell = row.insertCell(5);
+            actionCell.innerHTML = `
+                <button class="action-btn edit" data-id="${product.id}"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete" data-id="${product.id}"><i class="fas fa-trash"></i></button>
+            `;
+        }
+        
+        // Add category to table
+        function addCategoryToTable(category) {
+            const row = categoriesTable.insertRow();
+            
+            // Category name with icon
+            const nameCell = row.insertCell(0);
+            nameCell.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <i class="${category.icon}" style="margin-right: 10px; font-size: 1.2rem;"></i>
+                    <div>
+                        <div style="font-weight: 500;">${category.name}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${category.id}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Product count
+            const countCell = row.insertCell(1);
+            const productCount = products.filter(p => p.category === category.id).length;
+            countCell.textContent = productCount;
+            
+            // Actions
+            const actionCell = row.insertCell(2);
+            actionCell.innerHTML = `
+                <button class="action-btn edit" data-id="${category.id}"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete" data-id="${category.id}"><i class="fas fa-trash"></i></button>
+            `;
+        }
+        
+        // Add order to table
+        function addOrderToTable(order, table) {
+            const row = table.insertRow();
+            
+            // Order ID
+            const idCell = row.insertCell(0);
+            idCell.textContent = `#${order.id.substring(0, 8)}`;
+            
+            // Customer
+            const customerCell = row.insertCell(1);
+            customerCell.innerHTML = `
+                <div style="font-weight: 500;">${order.userEmail}</div>
+                <div style="font-size: 0.8rem; color: var(--gray);">${order.userId.substring(0, 8)}</div>
+            `;
+            
+            // Date
+            const dateCell = row.insertCell(2);
+            const orderDate = new Date(order.createdAt);
+            dateCell.textContent = orderDate.toLocaleDateString();
+            
+            // Amount
+            const amountCell = row.insertCell(3);
+            amountCell.innerHTML = `<div style="font-weight: 600;">₹${order.total || 0}</div>`;
+            
+            // Status
+            const statusCell = row.insertCell(4);
+            statusCell.innerHTML = `
+                <span class="status ${order.status || 'pending'}">${order.status || 'pending'}</span>
+            `;
+            
+            // Actions
+            const actionCell = row.insertCell(5);
+            actionCell.innerHTML = `
+                <button class="action-btn view" data-id="${order.id}"><i class="fas fa-eye"></i></button>
+                <button class="action-btn edit" data-id="${order.id}"><i class="fas fa-edit"></i></button>
+            `;
+        }
+        
+        // Add user to table
+        function addUserToTable(user) {
+            const row = usersTable.insertRow();
+            
+            // User
             const userCell = row.insertCell(0);
             userCell.innerHTML = `
                 <div style="display: flex; align-items: center;">
@@ -1012,37 +1591,74 @@
                         }
                     </div>
                     <div>
-                        <div style="font-weight: 500;">${user.name || 'Unknown User'}</div>
-                        <div style="font-size: 0.8rem; color: var(--gray);">${message.userId.substring(0, 8)}</div>
+                        <div style="font-weight: 500;">${user.name || 'No name'}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${user.id.substring(0, 8)}</div>
                     </div>
                 </div>
             `;
             
-            // Message preview
-            const messageCell = row.insertCell(1);
-            messageCell.innerHTML = `
-                <div style="font-weight: 500; margin-bottom: 3px;">${message.subject || 'No subject'}</div>
-                <div style="font-size: 0.9rem; color: var(--gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
-                    ${message.message}
+            // Email
+            const emailCell = row.insertCell(1);
+            emailCell.textContent = user.email || '-';
+            
+            // Phone
+            const phoneCell = row.insertCell(2);
+            phoneCell.textContent = user.phone || '-';
+            
+            // Orders
+            const ordersCell = row.insertCell(3);
+            const userOrders = orders.filter(o => o.userId === user.id).length;
+            ordersCell.textContent = userOrders;
+            
+            // Actions
+            const actionCell = row.insertCell(4);
+            actionCell.innerHTML = `
+                <button class="action-btn view" data-id="${user.id}"><i class="fas fa-eye"></i></button>
+                <button class="action-btn delete" data-id="${user.id}"><i class="fas fa-trash"></i></button>
+            `;
+        }
+        
+        // Add message to table
+        function addMessageToTable(message) {
+            const row = messagesTable.insertRow();
+            
+            // User
+            const userCell = row.insertCell(0);
+            userCell.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; margin-right: 10px; overflow: hidden;">
+                        <span style="font-size: 1rem;">${message.userName ? message.userName.charAt(0).toUpperCase() : 'U'}</span>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">${message.userName || 'No name'}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${message.userEmail}</div>
+                    </div>
                 </div>
             `;
             
-            // Message type
-            const typeCell = row.insertCell(2);
-            typeCell.innerHTML = `
-                <span class="status ${message.type}">${message.type}</span>
-            `;
+            // Subject
+            const subjectCell = row.insertCell(1);
+            subjectCell.textContent = message.subject || 'No subject';
             
-            // Message status
-            const statusCell = row.insertCell(3);
-            statusCell.innerHTML = `
-                <span class="status ${message.status}">${message.status}</span>
-            `;
+            // Last Message (truncated)
+            const messageCell = row.insertCell(2);
+            const truncatedMessage = message.lastMessage.length > 50 
+                ? message.lastMessage.substring(0, 50) + '...' 
+                : message.lastMessage;
+            messageCell.textContent = truncatedMessage;
             
             // Date
-            const dateCell = row.insertCell(4);
+            const dateCell = row.insertCell(3);
             const messageDate = new Date(message.timestamp);
             dateCell.textContent = messageDate.toLocaleString();
+            
+            // Status
+            const statusCell = row.insertCell(4);
+            statusCell.innerHTML = `
+                <span class="status ${message.isAdminReply ? 'replied' : message.status}">
+                    ${message.isAdminReply ? 'replied' : message.status}
+                </span>
+            `;
             
             // Actions
             const actionCell = row.insertCell(5);
@@ -1050,67 +1666,229 @@
                 <button class="action-btn view" data-id="${message.id}"><i class="fas fa-eye"></i></button>
                 <button class="action-btn reply" data-id="${message.id}"><i class="fas fa-reply"></i></button>
             `;
+        }
+        
+        // Get rating stars HTML
+        function getRatingStars(rating) {
+            if (!rating) return '';
             
-            // Highlight unread messages
-            if (message.status === 'unread' && message.type === 'admin') {
-                row.style.backgroundColor = 'rgba(67, 97, 238, 0.05)';
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            return stars;
+        }
+        
+        // Show order details
+        function showOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            currentOrder = order;
+            
+            const orderDetails = document.getElementById('orderDetailsContent');
+            orderDetails.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">Order #${order.id.substring(0, 8)}</h3>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: var(--gray);">Date:</span>
+                        <span>${new Date(order.createdAt).toLocaleString()}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: var(--gray);">Status:</span>
+                        <span class="status ${order.status || 'pending'}">${order.status || 'pending'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: var(--gray);">Payment Method:</span>
+                        <span>${order.paymentMethod || 'Cash on Delivery'}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">Customer Details</h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: var(--gray);">Name:</span>
+                        <span>${order.userName || 'Not provided'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: var(--gray);">Email:</span>
+                        <span>${order.userEmail}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: var(--gray);">Phone:</span>
+                        <span>${order.userPhone || 'Not provided'}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">Shipping Address</h4>
+                    <div style="margin-bottom: 5px;">
+                        ${order.shippingAddress || 'Not provided'}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">Order Items</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <th style="padding: 10px 0; text-align: left;">Product</th>
+                                <th style="padding: 10px 0; text-align: right;">Price</th>
+                                <th style="padding: 10px 0; text-align: center;">Qty</th>
+                                <th style="padding: 10px 0; text-align: right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 10px 0;">
+                                    <div style="display: flex; align-items: center;">
+                                        <img src="${order.productImage}" alt="${order.productTitle}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;">
+                                        <div>
+                                            <div style="font-weight: 500;">${order.productTitle}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="padding: 10px 0; text-align: right;">₹${order.price}</td>
+                                <td style="padding: 10px 0; text-align: center;">${order.quantity}</td>
+                                <td style="padding: 10px 0; text-align: right;">₹${order.total}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="border-top: 1px solid #eee; padding-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 500;">
+                        <span>Total:</span>
+                        <span>₹${order.total}</span>
+                    </div>
+                </div>
+            `;
+            
+            orderModal.classList.add('active');
+        }
+        
+        // Show message details and conversation
+        function showMessageDetails(messageId) {
+            database.ref('messages/' + messageId).once('value').then((snapshot) => {
+                const messageThread = snapshot.val();
+                if (!messageThread) return;
+                
+                currentMessageThread = messageThread;
+                currentMessageThread.id = messageId;
+                
+                const messageDetails = document.getElementById('messageDetailsContent');
+                messageDetails.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">${messageThread.subject || 'No Subject'}</h3>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: var(--gray);">From:</span>
+                            <span>${messageThread.userName || 'Unknown User'} (${messageThread.userEmail})</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: var(--gray);">Started:</span>
+                            <span>${new Date(messageThread.createdAt).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="message-container">
+                        ${renderMessageConversation(messageThread.messages)}
+                    </div>
+                `;
+                
+                // Mark messages as read when opened
+                markMessagesAsRead(messageThread);
+                
+                messageModal.classList.add('active');
+            });
+        }
+        
+        // Render message conversation
+        function renderMessageConversation(messages) {
+            if (!messages) return '<p>No messages in this conversation.</p>';
+            
+            let html = '';
+            const sortedMessages = Object.values(messages).sort((a, b) => a.timestamp - b.timestamp);
+            
+            sortedMessages.forEach(msg => {
+                html += `
+                    <div class="message ${msg.isAdminReply ? 'admin' : 'user'}">
+                        <div class="message-header">
+                            <span class="message-sender">${msg.isAdminReply ? 'Admin' : (currentMessageThread.userName || 'User')}</span>
+                            <span class="message-time">${new Date(msg.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="message-content">${msg.content}</div>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+        
+        // Mark messages as read
+        function markMessagesAsRead(messageThread) {
+            if (!messageThread.messages) return;
+            
+            const updates = {};
+            let hasUpdates = false;
+            
+            // Find all unread messages from user and mark them as read
+            Object.keys(messageThread.messages).forEach(key => {
+                const msg = messageThread.messages[key];
+                if (!msg.isAdminReply && msg.status === 'unread') {
+                    updates[`messages/${messageThread.id}/messages/${key}/status`] = 'read';
+                    hasUpdates = true;
+                }
+            });
+            
+            if (hasUpdates) {
+                database.ref().update(updates)
+                    .then(() => console.log('Messages marked as read'))
+                    .catch(error => console.error('Error marking messages as read:', error));
             }
         }
         
-        // Show message thread
-        function showMessageThread(messageId) {
-            const message = messages.find(m => m.id === messageId);
-            if (!message) return;
+        // Send reply to message thread
+        function sendReply() {
+            const replyContent = document.getElementById('replyMessage').value.trim();
+            if (!replyContent || !currentMessageThread) return;
             
-            currentMessageThread = message;
+            const newMessageKey = database.ref().child('messages').push().key;
+            const timestamp = Date.now();
             
-            // Find user
-            const user = users.find(u => u.id === message.userId) || {};
-            currentMessageUser = user;
+            const messageData = {
+                content: replyContent,
+                timestamp: timestamp,
+                isAdminReply: true,
+                status: 'read' // Admin messages are always marked as read
+            };
             
-            // Update user info
-            document.getElementById('messageUserImage').src = user.photoURL || 'https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png';
-            document.getElementById('messageUserName').textContent = user.name || 'Unknown User';
-            document.getElementById('messageUserEmail').textContent = user.email || 'No email';
-            document.getElementById('messageUserPhone').textContent = user.phone || 'No phone';
+            const updates = {};
+            updates[`messages/${currentMessageThread.id}/messages/${newMessageKey}`] = messageData;
+            updates[`messages/${currentMessageThread.id}/updatedAt`] = timestamp;
             
-            // Load message thread
-            database.ref('messageThreads/' + message.threadId).orderByChild('timestamp').on('value', (snapshot) => {
-                messageThread.innerHTML = '';
-                
-                snapshot.forEach((childSnapshot) => {
-                    const threadMessage = childSnapshot.val();
-                    addMessageToThread(threadMessage);
+            database.ref().update(updates)
+                .then(() => {
+                    alert('Reply sent successfully!');
+                    document.getElementById('replyMessage').value = '';
+                    // Refresh the message view
+                    showMessageDetails(currentMessageThread.id);
+                })
+                .catch(error => {
+                    alert('Error sending reply: ' + error.message);
                 });
-                
-                // Mark as read if it's an admin message
-                if (message.type === 'admin' && message.status === 'unread') {
-                    database.ref('messages/' + message.id + '/status').set('read');
-                }
-                
-                // Scroll to bottom
-                messageThread.scrollTop = messageThread.scrollHeight;
-            });
-            
-            messageThreadModal.classList.add('active');
-        }
-        
-        // Add message to thread
-        function addMessageToThread(message) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message-item ${message.sender === 'admin' ? 'admin' : 'user'}`;
-            
-            const messageDate = new Date(message.timestamp);
-            
-            messageDiv.innerHTML = `
-                <div class="message-header">
-                    <span class="message-sender">${message.sender === 'admin' ? 'Admin' : currentMessageUser.name || 'User'}</span>
-                    <span class="message-time">${messageDate.toLocaleString()}</span>
-                </div>
-                <div class="message-content">${message.message}</div>
-            `;
-            
-            messageThread.appendChild(messageDiv);
         }
         
         // Setup event listeners
@@ -1183,134 +1961,214 @@
                 btn.classList.add('active');
             }
             
-            // View message thread
+            // Add product buttons
+            addProductBtn.addEventListener('click', () => {
+                productForm.reset();
+                document.querySelector('.modal-title').textContent = 'Add New Product';
+                productModal.classList.add('active');
+            });
+            
+            addNewProductBtn.addEventListener('click', () => {
+                productForm.reset();
+                document.querySelector('.modal-title').textContent = 'Add New Product';
+                productModal.classList.add('active');
+            });
+            
+            // Add category button
+            addCategoryBtn.addEventListener('click', () => {
+                categoryForm.reset();
+                document.querySelector('.modal-title').textContent = 'Add New Category';
+                categoryModal.classList.add('active');
+            });
+            
+            // Save product
+            saveProductBtn.addEventListener('click', () => {
+                const productData = {
+                    title: document.getElementById('productName').value,
+                    category: document.getElementById('productCategory').value,
+                    description: document.getElementById('productDescription').value,
+                    price: parseFloat(document.getElementById('productPrice').value),
+                    originalPrice: parseFloat(document.getElementById('productOriginalPrice').value) || null,
+                    discount: parseInt(document.getElementById('productDiscount').value) || null,
+                    stock: parseInt(document.getElementById('productStock').value),
+                    brand: document.getElementById('productBrand').value,
+                    image: document.getElementById('productImage').value,
+                    rating: parseFloat(document.getElementById('productRating').value) || null,
+                    ratingCount: parseInt(document.getElementById('productRatingCount').value) || null,
+                    features: document.getElementById('productFeatures').value ? 
+                        JSON.parse(document.getElementById('productFeatures').value) : {}
+                };
+                
+                // Add to Firebase
+                database.ref('products').push(productData)
+                    .then(() => {
+                        alert('Product added successfully!');
+                        productModal.classList.remove('active');
+                    })
+                    .catch(error => {
+                        alert('Error adding product: ' + error.message);
+                    });
+            });
+            
+            // Save category
+            saveCategoryBtn.addEventListener('click', () => {
+                const categoryData = {
+                    name: document.getElementById('categoryName').value,
+                    id: document.getElementById('categoryId').value,
+                    icon: document.getElementById('categoryIcon').value,
+                    image: document.getElementById('categoryImage').value
+                };
+                
+                // Add to Firebase
+                database.ref('categories/' + categoryData.id).set(categoryData)
+                    .then(() => {
+                        alert('Category added successfully!');
+                        categoryModal.classList.remove('active');
+                    })
+                    .catch(error => {
+                        alert('Error adding category: ' + error.message);
+                    });
+            });
+            
+            // Close modals
+            cancelProductBtn.addEventListener('click', () => {
+                productModal.classList.remove('active');
+            });
+            
+            cancelCategoryBtn.addEventListener('click', () => {
+                categoryModal.classList.remove('active');
+            });
+            
+            closeOrderBtn.addEventListener('click', () => {
+                orderModal.classList.remove('active');
+            });
+            
+            closeMessageBtn.addEventListener('click', () => {
+                messageModal.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.modal-close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', () => {
+                    productModal.classList.remove('active');
+                    categoryModal.classList.remove('active');
+                    orderModal.classList.remove('active');
+                    messageModal.classList.remove('active');
+                });
+            });
+            
+            // Send reply
+            sendReplyBtn.addEventListener('click', sendReply);
+            replyForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                sendReply();
+            });
+            
+            // Update order status
+            updateOrderBtn.addEventListener('click', () => {
+                if (!currentOrder) return;
+                
+                const newStatus = prompt('Enter new status (pending/completed/cancelled):', currentOrder.status || 'pending');
+                
+                if (newStatus && ['pending', 'completed', 'cancelled'].includes(newStatus.toLowerCase())) {
+                    database.ref('orders/' + currentOrder.id + '/status').set(newStatus.toLowerCase())
+                        .then(() => {
+                            alert('Order status updated successfully!');
+                            orderModal.classList.remove('active');
+                        })
+                        .catch(error => {
+                            alert('Error updating order status: ' + error.message);
+                        });
+                }
+            });
+            
+            // View order details
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.action-btn.view')) {
-                    const messageId = e.target.closest('.action-btn.view').dataset.id;
-                    showMessageThread(messageId);
+                    const btn = e.target.closest('.action-btn.view');
+                    const id = btn.dataset.id;
+                    
+                    // Determine which table the button is in
+                    if (btn.closest('#recentOrdersTable') || btn.closest('#allOrdersTable')) {
+                        showOrderDetails(id);
+                    } else if (btn.closest('#messagesTable')) {
+                        showMessageDetails(id);
+                    }
                 }
                 
                 // Reply to message
                 if (e.target.closest('.action-btn.reply')) {
                     const messageId = e.target.closest('.action-btn.reply').dataset.id;
-                    showMessageThread(messageId);
+                    showMessageDetails(messageId);
                 }
-            });
-            
-            // Close message thread
-            closeMessageThreadBtn.addEventListener('click', () => {
-                messageThreadModal.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.modal-close').forEach(closeBtn => {
-                closeBtn.addEventListener('click', () => {
-                    messageThreadModal.classList.remove('active');
-                });
-            });
-            
-            // Send reply
-            replyMessageForm.addEventListener('submit', (e) => {
-                e.preventDefault();
                 
-                const replyText = document.getElementById('replyMessage').value.trim();
-                if (!replyText) return;
-                
-                const replyData = {
-                    message: replyText,
-                    sender: 'admin',
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                };
-                
-                // Add to message thread
-                database.ref('messageThreads/' + currentMessageThread.threadId).push(replyData)
-                    .then(() => {
-                        // Update last message in messages list
-                        database.ref('messages/' + currentMessageThread.id + '/status').set('read');
+                // Edit product
+                if (e.target.closest('.action-btn.edit')) {
+                    const productId = e.target.closest('.action-btn.edit').dataset.id;
+                    const product = products.find(p => p.id === productId);
+                    
+                    if (product) {
+                        document.getElementById('productName').value = product.title;
+                        document.getElementById('productCategory').value = product.category;
+                        document.getElementById('productDescription').value = product.description;
+                        document.getElementById('productPrice').value = product.price;
+                        document.getElementById('productOriginalPrice').value = product.originalPrice || '';
+                        document.getElementById('productDiscount').value = product.discount || '';
+                        document.getElementById('productStock').value = product.stock;
+                        document.getElementById('productBrand').value = product.brand || '';
+                        document.getElementById('productImage').value = product.image;
+                        document.getElementById('productRating').value = product.rating || '';
+                        document.getElementById('productRatingCount').value = product.ratingCount || '';
+                        document.getElementById('productFeatures').value = JSON.stringify(product.features || {});
                         
-                        // Create notification for user
-                        const notificationData = {
-                            userId: currentMessageThread.userId,
-                            type: 'message',
-                            title: 'New Reply from Admin',
-                            message: `You have a new reply regarding: ${currentMessageThread.subject}`,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP,
-                            read: false,
-                            link: `message.html?thread=${currentMessageThread.threadId}`
+                        document.querySelector('.modal-title').textContent = 'Edit Product';
+                        productModal.classList.add('active');
+                        
+                        // Update save button to edit instead of add
+                        saveProductBtn.onclick = () => {
+                            const productData = {
+                                title: document.getElementById('productName').value,
+                                category: document.getElementById('productCategory').value,
+                                description: document.getElementById('productDescription').value,
+                                price: parseFloat(document.getElementById('productPrice').value),
+                                originalPrice: parseFloat(document.getElementById('productOriginalPrice').value) || null,
+                                discount: parseInt(document.getElementById('productDiscount').value) || null,
+                                stock: parseInt(document.getElementById('productStock').value),
+                                brand: document.getElementById('productBrand').value,
+                                image: document.getElementById('productImage').value,
+                                rating: parseFloat(document.getElementById('productRating').value) || null,
+                                ratingCount: parseInt(document.getElementById('productRatingCount').value) || null,
+                                features: document.getElementById('productFeatures').value ? 
+                                    JSON.parse(document.getElementById('productFeatures').value) : {}
+                            };
+                            
+                            // Update in Firebase
+                            database.ref('products/' + productId).update(productData)
+                                .then(() => {
+                                    alert('Product updated successfully!');
+                                    productModal.classList.remove('active');
+                                })
+                                .catch(error => {
+                                    alert('Error updating product: ' + error.message);
+                                });
                         };
-                        
-                        database.ref('notifications').push(notificationData);
-                        
-                        // Clear reply field
-                        document.getElementById('replyMessage').value = '';
-                        
-                        // Scroll to bottom
-                        messageThread.scrollTop = messageThread.scrollHeight;
-                    })
-                    .catch(error => {
-                        alert('Error sending reply: ' + error.message);
-                    });
-            });
-            
-            // Filter buttons
-            filterAllBtn.addEventListener('click', () => {
-                filterMessages('all');
-                setActiveFilter(filterAllBtn);
-            });
-            
-            filterUnreadBtn.addEventListener('click', () => {
-                filterMessages('unread');
-                setActiveFilter(filterUnreadBtn);
-            });
-            
-            filterPaymentBtn.addEventListener('click', () => {
-                filterMessages('payment');
-                setActiveFilter(filterPaymentBtn);
-            });
-            
-            filterOrderBtn.addEventListener('click', () => {
-                filterMessages('order');
-                setActiveFilter(filterOrderBtn);
-            });
-            
-            filterProblemBtn.addEventListener('click', () => {
-                filterMessages('problem');
-                setActiveFilter(filterProblemBtn);
-            });
-            
-            function setActiveFilter(btn) {
-                filterAllBtn.classList.remove('active');
-                filterUnreadBtn.classList.remove('active');
-                filterPaymentBtn.classList.remove('active');
-                filterOrderBtn.classList.remove('active');
-                filterProblemBtn.classList.remove('active');
+                    }
+                }
                 
-                btn.classList.add('active');
-            }
-        }
-        
-        // Filter messages
-        function filterMessages(type) {
-            allMessagesTable.innerHTML = '';
-            
-            let filteredMessages = messages;
-            
-            switch(type) {
-                case 'unread':
-                    filteredMessages = messages.filter(m => m.status === 'unread' && m.type === 'admin');
-                    break;
-                case 'payment':
-                    filteredMessages = messages.filter(m => m.type === 'payment');
-                    break;
-                case 'order':
-                    filteredMessages = messages.filter(m => m.type === 'order');
-                    break;
-                case 'problem':
-                    filteredMessages = messages.filter(m => m.type === 'problem');
-                    break;
-            }
-            
-            filteredMessages.forEach(message => {
-                addMessageToTable(message, allMessagesTable);
+                // Delete product
+                if (e.target.closest('.action-btn.delete')) {
+                    if (confirm('Are you sure you want to delete this product?')) {
+                        const productId = e.target.closest('.action-btn.delete').dataset.id;
+                        
+                        // Delete from Firebase
+                        database.ref('products/' + productId).remove()
+                            .then(() => {
+                                alert('Product deleted successfully!');
+                            })
+                            .catch(error => {
+                                alert('Error deleting product: ' + error.message);
+                            });
+                    }
+                }
             });
         }
     </script>
