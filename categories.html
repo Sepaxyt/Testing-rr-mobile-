@@ -14,15 +14,18 @@
         }
         
         body {
-            background-color: #f5f5f7;
+            background-color: #f8f9fa;
             color: #333;
         }
         
         header {
-            background-color: #1a1a1a;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: white;
             padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .header-container {
@@ -38,146 +41,97 @@
             font-size: 1.8rem;
             font-weight: bold;
             color: #ff6b6b;
+            display: flex;
+            align-items: center;
         }
         
         .logo span {
             color: white;
+            margin-left: 5px;
         }
         
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-        
-        nav ul li {
-            margin-left: 25px;
-        }
-        
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        nav ul li a:hover {
-            color: #ff6b6b;
+        .logo i {
+            margin-right: 10px;
         }
         
         .back-btn {
             background-color: #ff6b6b;
             color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 10px 20px;
+            border-radius: 30px;
             text-decoration: none;
             font-weight: 500;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+        }
+        
+        .back-btn i {
+            margin-right: 8px;
         }
         
         .back-btn:hover {
             background-color: #e05555;
-        }
-        
-        .search-cart {
-            display: flex;
-            align-items: center;
-        }
-        
-        .search-box {
-            position: relative;
-            margin-right: 20px;
-        }
-        
-        .search-box input {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: none;
-            width: 200px;
-            padding-right: 35px;
-        }
-        
-        .search-box i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-        }
-        
-        .cart-icon {
-            color: white;
-            font-size: 1.2rem;
-            position: relative;
-        }
-        
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: #ff6b6b;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 107, 107, 0.4);
         }
         
         .categories-container {
-            padding: 40px 20px;
+            padding: 60px 20px;
             max-width: 1200px;
             margin: 0 auto;
         }
         
         .page-title {
-            font-size: 2.2rem;
-            margin-bottom: 30px;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
             color: #1a1a1a;
             text-align: center;
             position: relative;
+            font-weight: 700;
         }
         
         .page-title::after {
             content: '';
             display: block;
-            width: 80px;
-            height: 3px;
-            background-color: #ff6b6b;
-            margin: 10px auto;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 100%);
+            margin: 15px auto;
+            border-radius: 2px;
         }
         
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
         }
         
         .category-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
             position: relative;
-            height: 220px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            height: 250px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
         }
         
         .category-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s;
+            transition: transform 0.6s;
         }
         
         .category-card:hover .category-image {
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
         
         .category-overlay {
@@ -185,110 +139,51 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 25px;
             color: white;
         }
         
         .category-title {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
             font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .category-count {
-            font-size: 0.95rem;
+            font-size: 1rem;
             opacity: 0.9;
             display: flex;
             align-items: center;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
         
         .category-count i {
-            margin-right: 8px;
-            font-size: 0.8rem;
-        }
-        
-        .featured-brands {
-            margin-top: 50px;
-            padding: 30px 0;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        .section-title {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 25px;
-            color: #1a1a1a;
-        }
-        
-        .brands-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            padding: 0 20px;
-        }
-        
-        .brand-logo {
-            height: 50px;
-            filter: grayscale(100%);
-            opacity: 0.7;
-            transition: all 0.3s;
-        }
-        
-        .brand-logo:hover {
-            filter: grayscale(0%);
-            opacity: 1;
+            margin-right: 10px;
+            font-size: 0.9rem;
         }
         
         footer {
-            background-color: #1a1a1a;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: white;
-            padding: 40px 0 20px;
+            padding: 30px 0 20px;
             margin-top: 50px;
         }
         
         .footer-container {
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
             padding: 0 20px;
-        }
-        
-        .footer-column h3 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: #ff6b6b;
-        }
-        
-        .footer-column ul {
-            list-style: none;
-        }
-        
-        .footer-column ul li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-column ul li a {
-            color: #ccc;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-column ul li a:hover {
-            color: white;
+            text-align: center;
         }
         
         .copyright {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid #333;
-            color: #888;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
             font-size: 0.9rem;
         }
         
@@ -298,16 +193,16 @@
                 gap: 15px;
             }
             
-            nav ul {
-                margin-top: 15px;
-            }
-            
-            .search-box input {
-                width: 150px;
+            .logo {
+                margin-bottom: 10px;
             }
             
             .categories-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 2rem;
             }
         }
     </style>
@@ -315,22 +210,12 @@
 <body>
     <header>
         <div class="header-container">
-            <div class="logo">RR <span>MOBILE ACCESSORIES</span></div>
-            <nav>
-                <ul>
-                    <li><a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Home</a></li>
-                </ul>
-            </nav>
-            <div class="search-cart">
-                <div class="search-box">
-                    <input type="text" placeholder="Search products...">
-                    <i class="fas fa-search"></i>
-                </div>
-                <a href="#" class="cart-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count">3</span>
-                </a>
+            <div class="logo">
+                <i class="fas fa-mobile-alt"></i>RR <span>MOBILE</span>
             </div>
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
         </div>
     </header>
     
@@ -342,7 +227,7 @@
                 <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Headphones" class="category-image">
                 <div class="category-overlay">
                     <h2 class="category-title">Headphones</h2>
-                    <div class="category-count"><i class="fas fa-box-open"></i> 50+ products</div>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 50+ premium products</div>
                 </div>
             </a>
             
@@ -350,7 +235,7 @@
                 <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Phone Covers" class="category-image">
                 <div class="category-overlay">
                     <h2 class="category-title">Phone Covers</h2>
-                    <div class="category-count"><i class="fas fa-box-open"></i> 35+ products</div>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 35+ stylish designs</div>
                 </div>
             </a>
             
@@ -358,7 +243,7 @@
                 <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Chargers" class="category-image">
                 <div class="category-overlay">
                     <h2 class="category-title">Chargers</h2>
-                    <div class="category-count"><i class="fas fa-box-open"></i> 28+ products</div>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 28+ fast charging</div>
                 </div>
             </a>
             
@@ -366,7 +251,7 @@
                 <img src="https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Power Banks" class="category-image">
                 <div class="category-overlay">
                     <h2 class="category-title">Power Banks</h2>
-                    <div class="category-count"><i class="fas fa-box-open"></i> 22+ products</div>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 22+ high capacity</div>
                 </div>
             </a>
             
@@ -374,7 +259,7 @@
                 <img src="https://images.unsplash.com/photo-1558379850-823f103f866a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Speakers" class="category-image">
                 <div class="category-overlay">
                     <h2 class="category-title">Bluetooth Speakers</h2>
-                    <div class="category-count"><i class="fas fa-box-open"></i> 18+ products</div>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 18+ crystal clear sound</div>
                 </div>
             </a>
             
@@ -382,35 +267,14 @@
                 <img src="https://images.unsplash.com/photo-1546054454-aa26e2b734c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Smart Watches" class="category-image">
                 <div class="category-overlay">
                     <h2 class="category-title">Smart Watches</h2>
-                    <div class="category-count"><i class="fas fa-box-open"></i> 15+ products</div>
+                    <div class="category-count"><i class="fas fa-box-open"></i> 15+ smart features</div>
                 </div>
             </a>
-        </div>
-        
-        <div class="featured-brands">
-            <h2 class="section-title">Featured Brands</h2>
-            <div class="brands-container">
-                <img src="https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png" alt="Apple" class="brand-logo" style="height: 40px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Samsung_Logo.svg/2560px-Samsung_Logo.svg.png" alt="Samsung" class="brand-logo" style="height: 40px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Sony_logo.svg/1280px-Sony_logo.svg.png" alt="Sony" class="brand-logo" style="height: 40px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/JBL_logo.svg/1280px-JBL_logo.svg.png" alt="JBL" class="brand-logo" style="height: 40px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Bose_logo.svg/1280px-Bose_logo.svg.png" alt="Bose" class="brand-logo" style="height: 40px;">
-            </div>
         </div>
     </div>
     
     <footer>
         <div class="footer-container">
-            <div class="footer-column">
-                <h3>Shop</h3>
-                <ul>
-                    <li><a href="headphones.html">Headphones</a></li>
-                    <li><a href="covers.html">Phone Covers</a></li>
-                    <li><a href="chargers.html">Chargers</a></li>
-                    <li><a href="powerbanks.html">Power Banks</a></li>
-                    <li><a href="speakers.html">Speakers</a></li>
-                </ul>
-            </div>
             <div class="copyright">
                 &copy; 2023 RR MOBILE ACCESSORIES. All Rights Reserved.
             </div>
