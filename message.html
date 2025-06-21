@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - RR MOBILE ACCESSORIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #0f2027, #203a43);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .brand-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .message-container {
+            flex: 1;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        .message-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        
+        .message-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        
+        .message-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .message-category {
+            margin-bottom: 30px;
+        }
+        
+        .category-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-title i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .message-list {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .message-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .message-item:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .message-item:last-child {
+            border-bottom: none;
+        }
+        
+        .message-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .payment-icon {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .order-icon {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+        
+        .cancel-icon {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger);
+        }
+        
+        .problem-icon {
+            background-color: rgba(248, 150, 30, 0.1);
+            color: var(--warning);
+        }
+        
+        .help-icon {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--gray);
+        }
+        
+        .update-icon {
+            background-color: rgba(63, 55, 201, 0.1);
+            color: var(--secondary);
+        }
+        
+        .message-content {
+            flex: 1;
+        }
+        
+        .message-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .message-text {
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .unread-badge {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            margin-left: 5px;
+        }
+        
+        .no-messages {
+            padding: 30px;
+            text-align: center;
+            color: var(--gray);
+        }
+        
+        /* Message Detail Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .message-modal {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .message-detail-container {
+            margin-bottom: 20px;
+        }
+        
+        .message-detail-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .message-detail-sender {
+            font-weight: 600;
+        }
+        
+        .message-detail-time {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .message-detail-content {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+        
+        .reply-form {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        footer {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .footer-link {
+            color: var(--dark);
+            text-decoration: none;
+        }
+        
+        .copyright {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .message-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .message-item {
+                flex-direction: column;
+            }
+            
+            .message-icon {
+                margin-bottom: 10px;
+            }
+            
+            .message-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .message-time {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="RR Logo" class="logo">
+            <div class="brand-name">Messages</div>
+        </div>
+    </header>
+    
+    <div class="message-container">
+        <div class="message-tabs">
+            <div class="message-tab active" onclick="filterMessages('all')">All Messages</div>
+            <div class="message-tab" onclick="filterMessages('payment')">Payments</div>
+            <div class="message-tab" onclick="filterMessages('order')">Orders</div>
+            <div class="message-tab" onclick="filterMessages('cancel')">Cancellations</div>
+            <div class="message-tab" onclick="filterMessages('problem')">Problems</div>
+            <div class="message-tab" onclick="filterMessages('help')">Help</div>
+            <div class="message-tab" onclick="filterMessages('update')">Updates</div>
+        </div>
+        
+        <div id="allMessages">
+            <div class="message-category">
+                <h2 class="category-title"><i class="fas fa-money-bill-wave"></i> Payment Messages</h2>
+                <div class="message-list" id="paymentMessages">
+                    <!-- Payment messages will be loaded here -->
+                    <div class="no-messages">No payment messages found</div>
+                </div>
+            </div>
+            
+            <div class="message-category">
+                <h2 class="category-title"><i class="fas fa-shopping-bag"></i> Order Messages</h2>
+                <div class="message-list" id="orderMessages">
+                    <!-- Order messages will be loaded here -->
+                    <div class="no-messages">No order messages found</div>
+                </div>
+            </div>
+            
+            <div class="message-category">
+                <h2 class="category-title"><i class="fas fa-times-circle"></i> Cancellation Messages</h2>
+                <div class="message-list" id="cancelMessages">
+                    <!-- Cancellation messages will be loaded here -->
+                    <div class="no-messages">No cancellation messages found</div>
+                </div>
+            </div>
+            
+            <div class="message-category">
+                <h2 class="category-title"><i class="fas fa-exclamation-triangle"></i> Problem Reports</h2>
+                <div class="message-list" id="problemMessages">
+                    <!-- Problem messages will be loaded here -->
+                    <div class="no-messages">No problem reports found</div>
+                </div>
+            </div>
+            
+            <div class="message-category">
+                <h2 class="category-title"><i class="fas fa-question-circle"></i> Help Requests</h2>
+                <div class="message-list" id="helpMessages">
+                    <!-- Help messages will be loaded here -->
+                    <div class="no-messages">No help requests found</div>
+                </div>
+            </div>
+            
+            <div class="message-category">
+                <h2 class="category-title"><i class="fas fa-bell"></i> Updates & Notifications</h2>
+                <div class="message-list" id="updateMessages">
+                    <!-- Update messages will be loaded here -->
+                    <div class="no-messages">No updates found</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="filteredMessages" style="display: none;">
+            <div class="message-list" id="filteredMessagesList">
+                <!-- Filtered messages will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Detail Modal -->
+    <div class="modal-overlay" id="messageDetailModal">
+        <div class="message-modal">
+            <div class="modal-header">
+                <div class="modal-title" id="messageDetailTitle">Message Details</div>
+                <div class="modal-close" id="closeMessageDetail">&times;</div>
+            </div>
+            <div class="modal-body">
+                <div id="messageDetailContent">
+                    <!-- Message details will be loaded here -->
+                </div>
+                
+                <form class="reply-form" id="messageReplyForm">
+                    <div class="form-group">
+                        <label class="form-label">Your Reply</label>
+                        <textarea class="form-control" id="replyMessage" required placeholder="Type your reply here..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelReplyBtn">Cancel</button>
+                <button class="btn btn-primary" id="sendReplyBtn">Send Reply</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="about.html" class="footer-link">About Us</a>
+            <a href="contact.html" class="footer-link">Contact</a>
+            <a href="terms.html" class="footer-link">Terms</a>
+            <a href="privacy.html" class="footer-link">Privacy</a>
+        </div>
+        <div class="copyright">© 2023 RR MOBILE ACCESSORIES. All rights reserved.</div>
+    </footer>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOlLzr0liPHXEssNXSpY8XozoYPPEeA60",
+            authDomain: "rr-mobile-accessories.firebaseapp.com",
+            databaseURL: "https://rr-mobile-accessories-default-rtdb.firebaseio.com",
+            projectId: "rr-mobile-accessories",
+            storageBucket: "rr-mobile-accessories.appspot.com",
+            messagingSenderId: "261034064103",
+            appId: "1:261034064103:web:b59fbb7118dd7f93868a42",
+            measurementId: "G-28RJEQ3X7H"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // Current user and messages
+        let currentUser = null;
+        let allMessages = [];
+        let currentMessage = null;
+        
+        // Filter messages by type
+        function filterMessages(type) {
+            // Update active tab
+            document.querySelectorAll('.message-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            if (type === 'all') {
+                document.getElementById('allMessages').style.display = 'block';
+                document.getElementById('filteredMessages').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('allMessages').style.display = 'none';
+            document.getElementById('filteredMessages').style.display = 'block';
+            
+            const filteredList = document.getElementById('filteredMessagesList');
+            filteredList.innerHTML = '';
+            
+            const filteredMessages = allMessages.filter(msg => msg.type === type);
+            
+            if (filteredMessages.length === 0) {
+                filteredList.innerHTML = '<div class="no-messages">No messages found</div>';
+                return;
+            }
+            
+            filteredMessages.forEach(message => {
+                filteredList.appendChild(createMessageElement(message));
+            });
+        }
+        
+        // Create message element
+        function createMessageElement(message) {
+            const messageItem = document.createElement('div');
+            messageItem.className = 'message-item';
+            messageItem.setAttribute('data-id', message.id);
+            messageItem.addEventListener('click', () => showMessageDetail(message.id));
+            
+            let iconClass = '';
+            let icon = '';
+            
+            switch(message.type) {
+                case 'payment':
+                    iconClass = 'payment-icon';
+                    icon = 'fa-money-bill-wave';
+                    break;
+                case 'order':
+                    iconClass = 'order-icon';
+                    icon = 'fa-shopping-bag';
+                    break;
+                case 'cancel':
+                    iconClass = 'cancel-icon';
+                    icon = 'fa-times-circle';
+                    break;
+                case 'problem':
+                    iconClass = 'problem-icon';
+                    icon = 'fa-exclamation-triangle';
+                    break;
+                case 'help':
+                    iconClass = 'help-icon';
+                    icon = 'fa-question-circle';
+                    break;
+                case 'update':
+                    iconClass = 'update-icon';
+                    icon = 'fa-bell';
+                    break;
+            }
+            
+            const date = new Date(message.timestamp);
+            const formattedDate = date.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            messageItem.innerHTML = `
+                <div class="message-icon ${iconClass}">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-title">
+                        <span>${message.title} ${!message.isRead ? '<span class="unread-badge"></span>' : ''}</span>
+                        <span class="message-time">${formattedDate}</span>
+                    </div>
+                    <div class="message-text">${message.message}</div>
+                </div>
+            `;
+            
+            return messageItem;
+        }
+        
+        // Show message detail
+        function showMessageDetail(messageId) {
+            const message = allMessages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            currentMessage = message;
+            
+            const date = new Date(message.timestamp);
+            const formattedDate = date.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            document.getElementById('messageDetailTitle').textContent = message.title;
+            
+            const messageDetail = document.getElementById('messageDetailContent');
+            messageDetail.innerHTML = `
+                <div class="message-detail-container">
+                    <div class="message-detail-header">
+                        <div class="message-detail-sender">RR Mobile Support</div>
+                        <div class="message-detail-time">${formattedDate}</div>
+                    </div>
+                    <div class="message-detail-content">
+                        ${message.message}
+                    </div>
+                </div>
+            `;
+            
+            // Mark message as read
+            if (!message.isRead) {
+                database.ref(`users/${currentUser.uid}/messages/${message.id}`).update({
+                    isRead: true
+                })
+                .then(() => {
+                    message.isRead = true;
+                    updateMessageUI(message);
+                })
+                .catch(error => {
+                    console.error('Error marking message as read:', error);
+                });
+            }
+            
+            document.getElementById('messageDetailModal').classList.add('active');
+        }
+        
+        // Update message UI after being marked as read
+        function updateMessageUI(message) {
+            // Update in all messages list
+            const messageElements = document.querySelectorAll(`.message-item[data-id="${message.id}"]`);
+            messageElements.forEach(el => {
+                const badge = el.querySelector('.unread-badge');
+                if (badge) {
+                    badge.remove();
+                }
+            });
+            
+            // Update in filtered list if exists
+            const filteredList = document.getElementById('filteredMessagesList');
+            if (filteredList.style.display !== 'none') {
+                const filteredMessage = filteredList.querySelector(`.message-item[data-id="${message.id}"]`);
+                if (filteredMessage) {
+                    const badge = filteredMessage.querySelector('.unread-badge');
+                    if (badge) {
+                        badge.remove();
+                    }
+                }
+            }
+        }
+        
+        // Send reply to message
+        function sendReply() {
+            const replyContent = document.getElementById('replyMessage').value.trim();
+            if (!replyContent || !currentMessage) return;
+            
+            const timestamp = Date.now();
+            const newMessageKey = database.ref().child('messages').push().key;
+            
+            // Create reply data
+            const replyData = {
+                content: replyContent,
+                timestamp: timestamp,
+                isAdminReply: true,
+                status: 'read'
+            };
+            
+            // Update in messages collection
+            const updates = {};
+            updates[`messages/${currentMessage.threadId}/messages/${newMessageKey}`] = replyData;
+            updates[`messages/${currentMessage.threadId}/updatedAt`] = timestamp;
+            
+            // Also add to user's messages
+            updates[`users/${currentUser.uid}/messages/${currentMessage.id}_reply`] = {
+                type: currentMessage.type,
+                title: `Re: ${currentMessage.title}`,
+                message: replyContent,
+                timestamp: timestamp,
+                isRead: true
+            };
+            
+            database.ref().update(updates)
+                .then(() => {
+                    alert('Reply sent successfully!');
+                    document.getElementById('replyMessage').value = '';
+                    document.getElementById('messageDetailModal').classList.remove('active');
+                })
+                .catch(error => {
+                    alert('Error sending reply: ' + error.message);
+                });
+        }
+        
+        // Load messages from Firebase
+        function loadMessages() {
+            currentUser = auth.currentUser;
+            if (!currentUser) {
+                alert('Please login to view messages');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            database.ref('users/' + currentUser.uid + '/messages').orderByChild('timestamp').on('value', (snapshot) => {
+                allMessages = [];
+                const paymentMessages = document.getElementById('paymentMessages');
+                const orderMessages = document.getElementById('orderMessages');
+                const cancelMessages = document.getElementById('cancelMessages');
+                const problemMessages = document.getElementById('problemMessages');
+                const helpMessages = document.getElementById('helpMessages');
+                const updateMessages = document.getElementById('updateMessages');
+                
+                // Clear existing messages but keep "no messages" element
+                paymentMessages.innerHTML = paymentMessages.querySelector('.no-messages') ? 
+                    '<div class="no-messages">No payment messages found</div>' : '';
+                orderMessages.innerHTML = orderMessages.querySelector('.no-messages') ? 
+                    '<div class="no-messages">No order messages found</div>' : '';
+                cancelMessages.innerHTML = cancelMessages.querySelector('.no-messages') ? 
+                    '<div class="no-messages">No cancellation messages found</div>' : '';
+                problemMessages.innerHTML = problemMessages.querySelector('.no-messages') ? 
+                    '<div class="no-messages">No problem reports found</div>' : '';
+                helpMessages.innerHTML = helpMessages.querySelector('.no-messages') ? 
+                    '<div class="no-messages">No help requests found</div>' : '';
+                updateMessages.innerHTML = updateMessages.querySelector('.no-messages') ? 
+                    '<div class="no-messages">No updates found</div>' : '';
+                
+                snapshot.forEach((childSnapshot) => {
+                    const message = childSnapshot.val();
+                    message.id = childSnapshot.key;
+                    allMessages.push(message);
+                    
+                    const messageElement = createMessageElement(message);
+                    
+                    // Add to appropriate category
+                    switch(message.type) {
+                        case 'payment':
+                            if (paymentMessages.querySelector('.no-messages')) {
+                                paymentMessages.innerHTML = '';
+                            }
+                            paymentMessages.prepend(messageElement);
+                            break;
+                        case 'order':
+                            if (orderMessages.querySelector('.no-messages')) {
+                                orderMessages.innerHTML = '';
+                            }
+                            orderMessages.prepend(messageElement);
+                            break;
+                        case 'cancel':
+                            if (cancelMessages.querySelector('.no-messages')) {
+                                cancelMessages.innerHTML = '';
+                            }
+                            cancelMessages.prepend(messageElement);
+                            break;
+                        case 'problem':
+                            if (problemMessages.querySelector('.no-messages')) {
+                                problemMessages.innerHTML = '';
+                            }
+                            problemMessages.prepend(messageElement);
+                            break;
+                        case 'help':
+                            if (helpMessages.querySelector('.no-messages')) {
+                                helpMessages.innerHTML = '';
+                            }
+                            helpMessages.prepend(messageElement);
+                            break;
+                        case 'update':
+                            if (updateMessages.querySelector('.no-messages')) {
+                                updateMessages.innerHTML = '';
+                            }
+                            updateMessages.prepend(messageElement);
+                            break;
+                    }
+                });
+            });
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    loadMessages();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+            
+            // Close message detail modal
+            document.getElementById('closeMessageDetail').addEventListener('click', () => {
+                document.getElementById('messageDetailModal').classList.remove('active');
+            });
+            
+            document.getElementById('cancelReplyBtn').addEventListener('click', () => {
+                document.getElementById('messageDetailModal').classList.remove('active');
+            });
+            
+            // Send reply
+            document.getElementById('sendReplyBtn').addEventListener('click', sendReply);
+            document.getElementById('messageReplyForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                sendReply();
+            });
+        });
+    </script>
+</body>
+</html>
