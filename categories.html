@@ -3,34 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categories - RR MOBILE ACCESSORIES</title>
-    <!-- Same stylesheets -->
+    <title>Premium Categories - RR MOBILE ACCESSORIES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .categories-container {
-            padding: 20px;
+        :root {
+            --primary-color: #6c63ff;
+            --secondary-color: #ff6584;
+            --dark-color: #2d3748;
+            --light-color: #f8f9fa;
+            --gold-color: #ffd700;
+            --vip-gradient: linear-gradient(135deg, #6c63ff 0%, #ff6584 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f7;
+            color: #333;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--gold-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .vip-badge {
+            background: var(--vip-gradient);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+        
+        .categories-container {
+            padding: 40px 0;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+        
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--vip-gradient);
+            margin: 0 auto;
+            border-radius: 2px;
         }
         
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
         }
         
         .category-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             position: relative;
-            height: 200px;
+            height: 220px;
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         
         .category-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .category-card:hover .category-image {
+            transform: scale(1.05);
         }
         
         .category-overlay {
@@ -38,64 +156,341 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             padding: 20px;
             color: white;
         }
         
         .category-title {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 5px;
+            font-weight: 600;
         }
         
         .category-count {
             font-size: 0.9rem;
-            opacity: 0.8;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-count i {
+            margin-right: 5px;
+            color: var(--gold-color);
+        }
+        
+        .vip-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--vip-gradient);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary-color);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #b3b3b3;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #b3b3b3;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .categories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .nav-links {
+                margin-top: 15px;
+            }
+            
+            .nav-links li {
+                margin-left: 15px;
+                margin-right: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Same header -->
-    
-    <div class="categories-container">
-        <h1>Shop by Category</h1>
-        
-        <div class="categories-grid" id="categoriesContainer">
-            <!-- Categories will load here -->
-            <a href="headphones.html" class="category-card">
-                <img src="https://via.placeholder.com/300x200" alt="Headphones" class="category-image">
-                <div class="category-overlay">
-                    <h2 class="category-title">Headphones</h2>
-                    <div class="category-count">50+ products</div>
-                </div>
-            </a>
-            <!-- More category cards -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-crown"></i>
+                    RR MOBILE ACCESSORIES
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="categories.html" class="active">Shop <span class="vip-badge">VIP</span></a></li>
+                    <li><a href="deals.html">Deals</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
+    </header>
     
-    <!-- Same footer -->
+    <main class="categories-container">
+        <div class="container">
+            <div class="page-title">
+                <h1>Premium Categories</h1>
+                <p>Explore our exclusive collection of mobile accessories</p>
+            </div>
+            
+            <div class="categories-grid" id="categoriesContainer">
+                <a href="headphones.html" class="category-card">
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Headphones" class="category-image">
+                    <div class="category-overlay">
+                        <h2 class="category-title">Headphones</h2>
+                        <div class="category-count"><i class="fas fa-box-open"></i> 50+ premium products</div>
+                    </div>
+                    <div class="vip-tag">VIP SELECTION</div>
+                </a>
+                
+                <a href="cases.html" class="category-card">
+                    <img src="https://images.unsplash.com/photo-1546054454-aa26e2b734c7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Phone Cases" class="category-image">
+                    <div class="category-overlay">
+                        <h2 class="category-title">Phone Cases</h2>
+                        <div class="category-count"><i class="fas fa-box-open"></i> 75+ premium products</div>
+                    </div>
+                    <div class="vip-tag">VIP SELECTION</div>
+                </a>
+                
+                <a href="chargers.html" class="category-card">
+                    <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Chargers" class="category-image">
+                    <div class="category-overlay">
+                        <h2 class="category-title">Chargers</h2>
+                        <div class="category-count"><i class="fas fa-box-open"></i> 40+ premium products</div>
+                    </div>
+                    <div class="vip-tag">VIP SELECTION</div>
+                </a>
+                
+                <a href="powerbanks.html" class="category-card">
+                    <img src="https://images.unsplash.com/photo-1597764690528-6b0f4632e5e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Power Banks" class="category-image">
+                    <div class="category-overlay">
+                        <h2 class="category-title">Power Banks</h2>
+                        <div class="category-count"><i class="fas fa-box-open"></i> 35+ premium products</div>
+                    </div>
+                    <div class="vip-tag">VIP SELECTION</div>
+                </a>
+                
+                <a href="smartwatches.html" class="category-card">
+                    <img src="https://images.unsplash.com/photo-1558433916-90a36b44753f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Smart Watches" class="category-image">
+                    <div class="category-overlay">
+                        <h2 class="category-title">Smart Watches</h2>
+                        <div class="category-count"><i class="fas fa-box-open"></i> 25+ premium products</div>
+                    </div>
+                    <div class="vip-tag">VIP SELECTION</div>
+                </a>
+                
+                <a href="earbuds.html" class="category-card">
+                    <img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Wireless Earbuds" class="category-image">
+                    <div class="category-overlay">
+                        <h2 class="category-title">Wireless Earbuds</h2>
+                        <div class="category-count"><i class="fas fa-box-open"></i> 45+ premium products</div>
+                    </div>
+                    <div class="vip-tag">VIP SELECTION</div>
+                </a>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>RR MOBILE ACCESSORIES</h3>
+                    <p>Premium mobile accessories for the discerning customer. Quality products with VIP service.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Shop</h3>
+                    <ul class="footer-links">
+                        <li><a href="headphones.html">Headphones</a></li>
+                        <li><a href="cases.html">Phone Cases</a></li>
+                        <li><a href="chargers.html">Chargers</a></li>
+                        <li><a href="powerbanks.html">Power Banks</a></li>
+                        <li><a href="smartwatches.html">Smart Watches</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Returns & Exchanges</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>VIP Club</h3>
+                    <p>Join our VIP club for exclusive deals and early access to new products.</p>
+                    <button style="background: var(--vip-gradient); color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 10px; cursor: pointer; font-weight: 600;">Join VIP Now</button>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 RR MOBILE ACCESSORIES. All Rights Reserved. Premium Mobile Accessories.</p>
+            </div>
+        </div>
+    </footer>
     
     <script>
+        // Sample data loading function - replace with your actual data source
         function loadCategories() {
-            database.ref('categories').once('value').then((snapshot) => {
-                const container = document.getElementById('categoriesContainer');
-                snapshot.forEach((categorySnapshot) => {
-                    const category = categorySnapshot.val();
-                    const card = document.createElement('a');
-                    card.href = `${categorySnapshot.key}.html`;
-                    card.className = 'category-card';
-                    card.innerHTML = `
-                        <img src="${category.image}" alt="${category.name}" class="category-image">
-                        <div class="category-overlay">
-                            <h2 class="category-title">${category.name}</h2>
-                            <div class="category-count">Shop now</div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
+            // In a real implementation, you would fetch this from your database
+            const categories = [
+                {
+                    id: "headphones",
+                    name: "Headphones",
+                    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                    count: "50+ premium products"
+                },
+                {
+                    id: "cases",
+                    name: "Phone Cases",
+                    image: "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                    count: "75+ premium products"
+                },
+                {
+                    id: "chargers",
+                    name: "Chargers",
+                    image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                    count: "40+ premium products"
+                },
+                {
+                    id: "powerbanks",
+                    name: "Power Banks",
+                    image: "https://images.unsplash.com/photo-1597764690528-6b0f4632e5e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                    count: "35+ premium products"
+                },
+                {
+                    id: "smartwatches",
+                    name: "Smart Watches",
+                    image: "https://images.unsplash.com/photo-1558433916-90a36b44753f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                    count: "25+ premium products"
+                },
+                {
+                    id: "earbuds",
+                    name: "Wireless Earbuds",
+                    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                    count: "45+ premium products"
+                }
+            ];
+            
+            const container = document.getElementById('categoriesContainer');
+            
+            // Clear existing content (if any)
+            container.innerHTML = '';
+            
+            // Add each category card
+            categories.forEach(category => {
+                const card = document.createElement('a');
+                card.href = `${category.id}.html`;
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <img src="${category.image}" alt="${category.name}" class="category-image">
+                    <div class="category-overlay">
+                        <h2 class="category-title">${category.name}</h2>
+                        <div class="category-count"><i class="fas fa-box-open"></i> ${category.count}</div>
+                    </div>
+                    <div class="vip-tag">VIP SELECTION</div>
+                `;
+                container.appendChild(card);
             });
         }
         
+        // Load categories when page loads
         document.addEventListener('DOMContentLoaded', loadCategories);
     </script>
 </body>
