@@ -162,11 +162,16 @@
             margin-bottom: 20px;
             display: none;
         }
+        
+        .required-field::after {
+            content: " *";
+            color: var(--danger);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="main.html" class="back-btn">
+        <a href="main.html" class="back-btn" id="backBtn">
             <i class="fas fa-arrow-left"></i> Back to Home
         </a>
         
@@ -187,12 +192,12 @@
         <div class="profile-form">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" placeholder="Enter your full name">
+                    <label for="name" class="required-field">Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
                 </div>
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" placeholder="Enter your phone number">
+                    <label for="phone" class="required-field">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter your phone number" required>
                 </div>
             </div>
             
@@ -202,14 +207,14 @@
             </div>
             
             <div class="form-group">
-                <label for="address">Full Address</label>
-                <textarea id="address" rows="3" placeholder="Enter your complete address"></textarea>
+                <label for="address" class="required-field">Full Address</label>
+                <textarea id="address" rows="3" placeholder="Enter your complete address" required></textarea>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="city">City</label>
-                    <input type="text" id="city" placeholder="Enter your city">
+                    <label for="city" class="required-field">City</label>
+                    <input type="text" id="city" placeholder="Enter your city" required>
                 </div>
                 <div class="form-group">
                     <label for="state">State</label>
@@ -219,8 +224,8 @@
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="pincode">Pincode</label>
-                    <input type="text" id="pincode" placeholder="Enter your pincode">
+                    <label for="pincode" class="required-field">Pincode</label>
+                    <input type="text" id="pincode" placeholder="Enter your pincode" required>
                 </div>
                 <div class="form-group">
                     <label for="landmark">Landmark</label>
@@ -269,11 +274,22 @@
         const profileEmailDisplay = document.getElementById('profileEmailDisplay');
         const profileAvatar = document.getElementById('profileAvatar');
         const successMessage = document.getElementById('successMessage');
+        const backBtn = document.getElementById('backBtn');
+        
+        // Check if we have a redirect URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redirect');
+        
+        // Update back button if we have a redirect
+        if (redirectUrl) {
+            backBtn.href = redirectUrl;
+            backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Order';
+        }
         
         // Check authentication and load profile data
         auth.onAuthStateChanged((user) => {
             if (!user) {
-                window.location.href = 'login.html';
+                window.location.href = 'login.html' + (redirectUrl ? '?redirect=' + encodeURIComponent(window.location.href) : '');
             } else {
                 // Load user data from Firebase
                 loadUserProfile(user.uid);
@@ -289,7 +305,7 @@
                     if (userData) {
                         // Display user data in form
                         nameInput.value = userData.name || '';
-                        emailInput.value = userData.email || '';
+                        emailInput.value = userData.email || auth.currentUser.email || '';
                         phoneInput.value = userData.phone || '';
                         addressInput.value = userData.address || '';
                         cityInput.value = userData.city || '';
@@ -299,7 +315,7 @@
                         
                         // Update profile display
                         profileNameDisplay.textContent = userData.name || 'User Name';
-                        profileEmailDisplay.textContent = userData.email || 'user@example.com';
+                        profileEmailDisplay.textContent = userData.email || auth.currentUser.email || 'user@example.com';
                         
                         // Set avatar with initials if no image
                         if (!userData.photoURL) {
@@ -308,6 +324,10 @@
                             profileAvatar.style.fontSize = '2rem';
                             profileAvatar.style.color = '#555';
                         }
+                    } else {
+                        // New user - set email from auth
+                        emailInput.value = auth.currentUser.email || '';
+                        profileEmailDisplay.textContent = auth.currentUser.email || 'user@example.com';
                     }
                 });
         }
@@ -316,7 +336,7 @@
         saveProfileBtn.addEventListener('click', () => {
             const userId = auth.currentUser?.uid;
             if (!userId) {
-                window.location.href = 'login.html';
+                window.location.href = 'login.html' + (redirectUrl ? '?redirect=' + encodeURIComponent(window.location.href) : '');
                 return;
             }
             
@@ -334,7 +354,19 @@
             
             // Validate required fields
             if (!userData.name || !userData.phone || !userData.address || !userData.city || !userData.pincode) {
-                alert('Please fill all required fields (Name, Phone, Address, City, Pincode)');
+                alert('Please fill all required fields (marked with *)');
+                return;
+            }
+            
+            // Validate phone number
+            if (!/^\d{10}$/.test(userData.phone)) {
+                alert('Please enter a valid 10-digit phone number');
+                return;
+            }
+            
+            // Validate pincode
+            if (!/^\d{6}$/.test(userData.pincode)) {
+                alert('Please enter a valid 6-digit pincode');
                 return;
             }
             
@@ -345,7 +377,12 @@
                     successMessage.style.display = 'block';
                     setTimeout(() => {
                         successMessage.style.display = 'none';
-                    }, 3000);
+                        
+                        // Redirect if we came from order-success
+                        if (redirectUrl) {
+                            window.location.href = redirectUrl;
+                        }
+                    }, 2000);
                     
                     // Update profile display
                     profileNameDisplay.textContent = userData.name;
