@@ -337,6 +337,41 @@
             margin-top: 20px;
         }
         
+        .payment-status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            display: block;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .status-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .timer {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
         @media (max-width: 768px) {
             .action-buttons {
                 flex-direction: column;
@@ -456,6 +491,8 @@
                     <div class="upi-id" id="upiId">aman5978@naviaxis</div>
                     <button class="copy-btn" onclick="copyUpiId()">Copy</button>
                 </div>
+                
+                <div id="paymentStatus" class="payment-status"></div>
             </div>
             
             <div class="payment-option" onclick="selectPayment('cod')">
@@ -515,10 +552,24 @@
         // Current order data
         let currentOrder = null;
         let selectedPaymentMethod = 'cod';
+        let paymentCheckInterval = null;
+        let orderRef = null;
+        let paymentTimeout = null;
+        let timeLeft = 300; // 5 minutes in seconds
         
         // Select payment method
         function selectPayment(method) {
             selectedPaymentMethod = method;
+            
+            // Clear any existing intervals/timeouts
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+                paymentCheckInterval = null;
+            }
+            if (paymentTimeout) {
+                clearTimeout(paymentTimeout);
+                paymentTimeout = null;
+            }
             
             // Update UI
             document.querySelectorAll('.payment-option').forEach(option => {
@@ -531,13 +582,18 @@
                 form.classList.remove('active');
             });
             
+            // Reset payment status
+            const paymentStatus = document.getElementById('paymentStatus');
+            paymentStatus.className = 'payment-status';
+            paymentStatus.textContent = '';
+            
             // Show selected payment form
             if (method === 'card') {
                 document.getElementById('cardPaymentForm').classList.add('active');
                 document.getElementById('payNowBtn').textContent = 'Pay Now';
             } else if (method === 'upi') {
                 document.getElementById('upiPaymentForm').classList.add('active');
-                document.getElementById('payNowBtn').textContent = 'Pay Now';
+                document.getElementById('payNowBtn').textContent = 'Verify Payment';
             } else if (method === 'cod') {
                 document.getElementById('codMessage').classList.add('active');
                 document.getElementById('payNowBtn').textContent = 'Buy Now';
@@ -611,6 +667,73 @@
             input.value = value;
         }
         
+        // Update payment status in UI
+        function updatePaymentStatus(status, message) {
+            const paymentStatus = document.getElementById('paymentStatus');
+            paymentStatus.className = 'payment-status status-' + status;
+            paymentStatus.textContent = message;
+            
+            if (status === 'success') {
+                document.getElementById('payNowBtn').disabled = true;
+                setTimeout(() => {
+                    window.location.href = `order-success.html?orderId=${orderRef.key}`;
+                }, 2000);
+            }
+        }
+        
+        // Simulate UPI payment verification
+        function simulateUPIPaymentVerification() {
+            const paymentStatus = document.getElementById('paymentStatus');
+            paymentStatus.className = 'payment-status status-pending';
+            paymentStatus.innerHTML = `Waiting for payment... <span class="timer">5:00</span>`;
+            
+            // Start countdown timer
+            timeLeft = 300;
+            const timerElement = paymentStatus.querySelector('.timer');
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    updatePaymentStatus('failed', 'Payment timeout. Please try again.');
+                    document.getElementById('payNowBtn').disabled = false;
+                    document.getElementById('payNowBtn').textContent = 'Try Again';
+                }
+            }, 1000);
+            
+            // Simulate payment verification (in real app, this would be a server-side check)
+            paymentCheckInterval = setInterval(() => {
+                // 30% chance of successful payment
+                if (Math.random() < 0.3) {
+                    clearInterval(paymentCheckInterval);
+                    clearInterval(timerInterval);
+                    updatePaymentStatus('success', 'Payment successful! Redirecting to order confirmation...');
+                    
+                    // Update order status in Firebase
+                    orderRef.update({
+                        status: 'paid',
+                        paymentVerified: true,
+                        paymentVerifiedAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    
+                    // Clear pending order from session
+                    sessionStorage.removeItem('pendingOrder');
+                }
+            }, 5000); // Check every 5 seconds
+            
+            // Timeout after 5 minutes
+            paymentTimeout = setTimeout(() => {
+                clearInterval(paymentCheckInterval);
+                clearInterval(timerInterval);
+                updatePaymentStatus('failed', 'Payment not received. Please try again.');
+                document.getElementById('payNowBtn').disabled = false;
+                document.getElementById('payNowBtn').textContent = 'Try Again';
+            }, 300000); // 5 minutes
+        }
+        
         // Process payment and create order
         function processPayment() {
             const payNowBtn = document.getElementById('payNowBtn');
@@ -622,12 +745,22 @@
                     payNowBtn.disabled = false;
                     return;
                 }
+                // Simulate card payment processing
+                setTimeout(() => {
+                    createOrder('paid');
+                }, 1500);
             } else if (selectedPaymentMethod === 'upi') {
-                payNowBtn.textContent = 'Verifying Payment...';
+                payNowBtn.textContent = 'Checking Payment...';
+                createOrder('pending');
+                simulateUPIPaymentVerification();
             } else {
                 payNowBtn.textContent = 'Placing Order...';
+                createOrder('pending');
             }
-            
+        }
+        
+        // Create order in Firebase
+        function createOrder(paymentStatus) {
             const user = auth.currentUser;
             if (!user) {
                 alert('Please login to complete your purchase');
@@ -635,7 +768,7 @@
                 return;
             }
             
-            // Create order
+            // Create order data
             const order = {
                 userId: user.uid,
                 productId: currentOrder.productId,
@@ -644,7 +777,7 @@
                 price: currentOrder.price,
                 quantity: currentOrder.quantity,
                 total: currentOrder.total,
-                status: selectedPaymentMethod === 'cod' ? 'pending' : 'paid',
+                status: paymentStatus,
                 paymentMethod: selectedPaymentMethod === 'card' ? 'Credit/Debit Card' : 
                               selectedPaymentMethod === 'upi' ? 'UPI Payment' : 'Cash on Delivery',
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
@@ -655,28 +788,28 @@
                 city: currentOrder.city,
                 state: currentOrder.state,
                 pincode: currentOrder.pincode,
-                landmark: currentOrder.landmark
+                landmark: currentOrder.landmark,
+                paymentVerified: paymentStatus === 'paid'
             };
             
-            // For demo purposes, we'll simulate payment processing
-            setTimeout(() => {
-                // Add to Firebase
-                const newOrderRef = database.ref('orders').push();
-                newOrderRef.set(order)
-                    .then(() => {
-                        // Clear pending order from session
+            // Add to Firebase
+            orderRef = database.ref('orders').push();
+            orderRef.set(order)
+                .then(() => {
+                    if (selectedPaymentMethod !== 'upi') {
+                        // For card and COD, redirect immediately
                         sessionStorage.removeItem('pendingOrder');
-                        
-                        // Redirect to success page
-                        window.location.href = `order-success.html?orderId=${newOrderRef.key}`;
-                    })
-                    .catch(error => {
-                        console.error('Error placing order:', error);
-                        alert('Error placing order. Please try again.');
-                        payNowBtn.disabled = false;
-                        payNowBtn.textContent = selectedPaymentMethod === 'cod' ? 'Buy Now' : 'Pay Now';
-                    });
-            }, 1500);
+                        window.location.href = `order-success.html?orderId=${orderRef.key}`;
+                    }
+                    // For UPI, we'll handle redirection after payment verification
+                })
+                .catch(error => {
+                    console.error('Error placing order:', error);
+                    alert('Error placing order. Please try again.');
+                    document.getElementById('payNowBtn').disabled = false;
+                    document.getElementById('payNowBtn').textContent = 
+                        selectedPaymentMethod === 'cod' ? 'Buy Now' : 'Pay Now';
+                });
         }
         
         // Initialize the page
@@ -700,7 +833,7 @@
             document.getElementById('totalAmount').textContent = currentOrder.total.toLocaleString('en-IN');
             
             // Update delivery address
-            const deliveryAddress = `${currentOrder.shippingAddress}, ${currentOrder.city}, ${currentOrder.state} - ${currentOrder.pincode}`;
+            let deliveryAddress = `${currentOrder.shippingAddress}, ${currentOrder.city}, ${currentOrder.state} - ${currentOrder.pincode}`;
             if (currentOrder.landmark) {
                 deliveryAddress += ` (Landmark: ${currentOrder.landmark})`;
             }
