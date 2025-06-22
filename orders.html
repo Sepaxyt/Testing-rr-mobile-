@@ -234,6 +234,46 @@
         .nav-item.active {
             color: var(--primary);
         }
+        
+        /* Toast Notification Styles */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .toast i {
+            font-size: 1.2rem;
+        }
+        
+        .toast.success {
+            background-color: #4BB543;
+        }
+        
+        .toast.error {
+            background-color: #FF3333;
+        }
+        
+        .toast.warning {
+            background-color: #FFCC00;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -252,6 +292,12 @@
             <h3>No Orders Yet</h3>
             <p>Your orders will appear here</p>
         </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i id="toastIcon"></i>
+        <span id="toastMessage"></span>
     </div>
     
     <!-- Footer Navigation -->
@@ -304,6 +350,9 @@
         // DOM Elements
         const ordersContainer = document.getElementById('ordersContainer');
         const noOrders = document.getElementById('noOrders');
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toastIcon');
+        const toastMessage = document.getElementById('toastMessage');
         
         // Navigation elements
         const footerHome = document.getElementById('footerHome');
@@ -311,6 +360,10 @@
         const footerOrders = document.getElementById('footerOrders');
         const footerWishlist = document.getElementById('footerWishlist');
         const footerAccount = document.getElementById('footerAccount');
+        
+        // Telegram configuration
+        const telegramBotToken = '8059039278:AAFC-fy4GUsgil2EwHxEclwzR8H02SEqvak';
+        const telegramChatId = '6690653192';
         
         // Check authentication and load orders
         auth.onAuthStateChanged((user) => {
@@ -320,6 +373,38 @@
                 loadOrders(user.uid);
             }
         });
+        
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toast.className = 'toast';
+            toastIcon.className = '';
+            
+            // Set icon and style based on type
+            switch(type) {
+                case 'success':
+                    toastIcon.className = 'fas fa-check-circle';
+                    toast.classList.add('success');
+                    break;
+                case 'error':
+                    toastIcon.className = 'fas fa-times-circle';
+                    toast.classList.add('error');
+                    break;
+                case 'warning':
+                    toastIcon.className = 'fas fa-exclamation-circle';
+                    toast.classList.add('warning');
+                    break;
+                default:
+                    toastIcon.className = 'fas fa-info-circle';
+            }
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
         
         // Load orders from Firebase
         function loadOrders(userId) {
@@ -439,23 +524,71 @@
                             cancelledAt: firebase.database.ServerValue.TIMESTAMP
                         })
                         .then(() => {
-                            alert('Order cancelled successfully');
+                            showToast('Order cancelled successfully', 'success');
                             
                             // Send Telegram notification
                             sendTelegramCancellationNotification(order, orderId);
+                            
+                            // Create admin notification
+                            createAdminNotification(order, orderId);
+                            
+                            // Add cancellation to user's order history
+                            addCancellationToUserHistory(order, orderId);
                         })
                         .catch((error) => {
-                            alert('Error cancelling order: ' + error.message);
+                            showToast('Error cancelling order', 'error');
                         });
                     });
             }
         }
         
+        // Create admin notification
+        function createAdminNotification(order, orderId) {
+            const notificationId = database.ref().child('adminNotifications').push().key;
+            const userId = auth.currentUser.uid;
+            
+            const notificationData = {
+                id: notificationId,
+                type: 'order_cancelled',
+                orderId: orderId,
+                userId: userId,
+                message: `Order #${orderId.substring(0, 8)} has been cancelled by the customer`,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                read: false
+            };
+            
+            database.ref('adminNotifications/' + notificationId).set(notificationData)
+                .then(() => {
+                    console.log('Admin notification created');
+                })
+                .catch(error => {
+                    console.error('Error creating admin notification:', error);
+                });
+        }
+        
+        // Add cancellation to user's history
+        function addCancellationToUserHistory(order, orderId) {
+            const userId = auth.currentUser.uid;
+            const timestamp = firebase.database.ServerValue.TIMESTAMP;
+            
+            const cancellationData = {
+                orderId: orderId,
+                timestamp: timestamp,
+                status: 'cancelled',
+                reason: 'Cancelled by customer'
+            };
+            
+            database.ref(`users/${userId}/orderHistory/${orderId}`).update(cancellationData)
+                .then(() => {
+                    console.log('Cancellation added to user history');
+                })
+                .catch(error => {
+                    console.error('Error adding cancellation to user history:', error);
+                });
+        }
+        
         // Send Telegram notification for cancelled order
         function sendTelegramCancellationNotification(order, orderId) {
-            const telegramBotToken = '8059039278:AAFC-fy4GUsgil2EwHxEclwzR8H02SEqvak';
-            const chatId = '6690653192';
-            
             const orderDate = new Date(order.createdAt).toLocaleString('en-IN', {
                 day: '2-digit',
                 month: '2-digit',
@@ -496,7 +629,7 @@ Phone: ${order.customerPhone}
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    chat_id: chatId,
+                    chat_id: telegramChatId,
                     text: message
                 })
             })
