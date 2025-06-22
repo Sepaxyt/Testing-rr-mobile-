@@ -31,7 +31,6 @@
             padding: 20px;
         }
         
-        /* Header Styles */
         header {
             background: linear-gradient(135deg, #0f2027, #203a43);
             color: white;
@@ -90,7 +89,6 @@
             position: relative;
         }
         
-        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -116,7 +114,6 @@
             color: var(--success);
         }
         
-        /* Product Detail Container */
         .product-detail-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -398,7 +395,6 @@
         </div>
     </header>
 
-    <!-- Toast Notification -->
     <div class="toast" id="toast">
         <i class="fas fa-check-circle"></i>
         <span id="toastMessage">Product added to cart successfully!</span>
@@ -559,7 +555,7 @@
                 });
         }
         
-        // Add to cart function
+        // Add to cart function - FIXED to prevent duplicates
         function addToCart() {
             const user = auth.currentUser;
             if (!user) {
@@ -577,18 +573,17 @@
                 .then(snapshot => {
                     if (snapshot.exists()) {
                         // Product exists, update quantity
+                        let updates = {};
                         snapshot.forEach(childSnapshot => {
-                            const existingItem = childSnapshot.val();
-                            const newQuantity = existingItem.quantity + quantity;
-                            
-                            database.ref('carts/' + user.uid + '/items/' + childSnapshot.key).update({
-                                quantity: newQuantity
-                            })
+                            updates['/carts/' + user.uid + '/items/' + childSnapshot.key + '/quantity'] = 
+                                firebase.database.ServerValue.increment(quantity);
+                        });
+                        
+                        database.ref().update(updates)
                             .then(() => {
                                 showToast('Product quantity updated in cart!');
                                 updateCartCount();
                             });
-                        });
                     } else {
                         // Product doesn't exist, add new item
                         const cartItem = {
