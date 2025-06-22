@@ -60,6 +60,62 @@
             font-weight: 600;
         }
         
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-icons i {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .cart-icon-container {
+            position: relative;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .toast i {
+            color: var(--success);
+        }
+        
         /* Product Detail Container */
         .product-detail-container {
             max-width: 1200px;
@@ -333,7 +389,20 @@
             <img src="https://i.ibb.co/mFPrvzHC/0a7ca26b-3215-4990-8d5a-b669b374e12f.png" alt="RR Logo" class="logo">
             <div class="brand-name">RR MOBILE ACCESSORIES</div>
         </div>
+        <div class="header-icons">
+            <i class="fas fa-search" id="searchIcon"></i>
+            <div class="cart-icon-container">
+                <i class="fas fa-shopping-cart" id="cartIcon"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
     </header>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Product added to cart successfully!</span>
+    </div>
 
     <div class="product-detail-container">
         <div class="product-images">
@@ -460,36 +529,87 @@
             }
         }
         
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Update cart count in header
+        function updateCartCount() {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            database.ref('carts/' + user.uid + '/items').once('value')
+                .then(snapshot => {
+                    let count = 0;
+                    if (snapshot.exists()) {
+                        snapshot.forEach(() => {
+                            count++;
+                        });
+                    }
+                    document.getElementById('cartCount').textContent = count;
+                });
+        }
+        
         // Add to cart function
         function addToCart() {
             const user = auth.currentUser;
             if (!user) {
-                alert('Please login to add items to cart');
-                window.location.href = 'login.html';
+                showToast('Please login to add items to cart');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
                 return;
             }
             
             const quantity = parseInt(document.getElementById('quantity').value);
             
-            // Create cart item
-            const cartItem = {
-                productId: currentProduct.id,
-                productTitle: currentProduct.title,
-                productImage: currentProduct.image,
-                price: currentProduct.price,
-                quantity: quantity,
-                addedAt: firebase.database.ServerValue.TIMESTAMP
-            };
-            
-            // Add to Firebase
-            const newCartItemRef = database.ref('carts/' + user.uid + '/items').push();
-            newCartItemRef.set(cartItem)
-                .then(() => {
-                    alert('Product added to cart successfully!');
+            // Check if product already exists in cart
+            database.ref('carts/' + user.uid + '/items').orderByChild('productId').equalTo(currentProduct.id).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        // Product exists, update quantity
+                        snapshot.forEach(childSnapshot => {
+                            const existingItem = childSnapshot.val();
+                            const newQuantity = existingItem.quantity + quantity;
+                            
+                            database.ref('carts/' + user.uid + '/items/' + childSnapshot.key).update({
+                                quantity: newQuantity
+                            })
+                            .then(() => {
+                                showToast('Product quantity updated in cart!');
+                                updateCartCount();
+                            });
+                        });
+                    } else {
+                        // Product doesn't exist, add new item
+                        const cartItem = {
+                            productId: currentProduct.id,
+                            productTitle: currentProduct.title,
+                            productImage: currentProduct.image,
+                            price: currentProduct.price,
+                            quantity: quantity,
+                            addedAt: firebase.database.ServerValue.TIMESTAMP
+                        };
+                        
+                        database.ref('carts/' + user.uid + '/items').push(cartItem)
+                            .then(() => {
+                                showToast('Product added to cart successfully!');
+                                updateCartCount();
+                            });
+                    }
                 })
                 .catch(error => {
                     console.error('Error adding to cart:', error);
-                    alert('Error adding to cart. Please try again.');
+                    showToast('Error adding to cart. Please try again.');
                 });
         }
         
@@ -497,8 +617,10 @@
         function buyNow() {
             const user = auth.currentUser;
             if (!user) {
-                alert('Please login to proceed with purchase');
-                window.location.href = 'login.html';
+                showToast('Please login to proceed with purchase');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
                 return;
             }
             
@@ -510,8 +632,10 @@
                 .then(snapshot => {
                     const userData = snapshot.val();
                     if (!userData || !userData.address || !userData.phone) {
-                        alert('Please complete your profile with address details before placing an order');
-                        window.location.href = 'profile.html';
+                        showToast('Please complete your profile with address details');
+                        setTimeout(() => {
+                            window.location.href = 'profile.html';
+                        }, 1000);
                         return;
                     }
                     
@@ -541,7 +665,7 @@
                 })
                 .catch(error => {
                     console.error('Error checking user details:', error);
-                    alert('Error processing your order. Please try again.');
+                    showToast('Error processing your order. Please try again.');
                 });
         }
         
@@ -591,6 +715,16 @@
             // Set up button event listeners
             document.getElementById('addToCartBtn').addEventListener('click', addToCart);
             document.getElementById('buyNowBtn').addEventListener('click', buyNow);
+            document.getElementById('cartIcon').addEventListener('click', () => {
+                window.location.href = 'cart.html';
+            });
+            
+            // Update cart count when user is logged in
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    updateCartCount();
+                }
+            });
             
             // Load related products
             loadRelatedProducts();
