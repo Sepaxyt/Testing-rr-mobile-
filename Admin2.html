@@ -1483,11 +1483,11 @@
                         const messageData = {
                             id: messageThread.id,
                             userId: messageThread.userId,
-                            userEmail: messageThread.userEmail,
-                            userName: messageThread.userName,
-                            subject: messageThread.subject,
-                            lastMessage: lastMessage.content,
-                            timestamp: lastMessage.timestamp,
+                            userEmail: messageThread.userEmail || 'No email',
+                            userName: messageThread.userName || 'No name',
+                            subject: messageThread.subject || 'No subject',
+                            lastMessage: lastMessage.content || 'No message',
+                            timestamp: lastMessage.timestamp || Date.now(),
                             status: lastMessage.status || 'unread',
                             isAdminReply: lastMessage.isAdminReply || false
                         };
@@ -1777,7 +1777,7 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                         <span style="color: var(--gray);">Email:</span>
-                        <span>${order.userEmail}</span>
+                        <span>${order.userEmail || 'Not provided'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                         <span style="color: var(--gray);">Phone:</span>
@@ -1847,7 +1847,7 @@
                         <h3 style="margin-bottom: 10px;">${messageThread.subject || 'No Subject'}</h3>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                             <span style="color: var(--gray);">From:</span>
-                            <span>${messageThread.userName || 'Unknown User'} (${messageThread.userEmail})</span>
+                            <span>${messageThread.userName || 'Unknown User'} (${messageThread.userEmail || 'No email'})</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                             <span style="color: var(--gray);">Started:</span>
@@ -1881,7 +1881,7 @@
                             <span class="message-sender">${msg.isAdminReply ? 'Admin' : (currentMessageThread.userName || 'User')}</span>
                             <span class="message-time">${new Date(msg.timestamp).toLocaleString()}</span>
                         </div>
-                        <div class="message-content">${msg.content}</div>
+                        <div class="message-content">${msg.content || 'No message content'}</div>
                     </div>
                 `;
             });
@@ -1924,7 +1924,7 @@
                 content: replyContent,
                 timestamp: timestamp,
                 isAdminReply: true,
-                status: 'read' // Admin messages are always marked as read
+                status: 'read'
             };
             
             const updates = {};
@@ -1949,7 +1949,10 @@
             const messageSubject = document.getElementById('messageSubject').value;
             const messageContent = document.getElementById('orderMessageContent').value;
             
-            if (!messageType || !messageSubject || !messageContent || !currentOrder) return;
+            if (!messageType || !messageSubject || !messageContent || !currentOrder) {
+                alert('Please fill all fields');
+                return;
+            }
             
             // Check if message thread already exists for this order
             database.ref('messages').orderByChild('orderId').equalTo(currentOrder.id).once('value')
@@ -1967,8 +1970,8 @@
                         messageThreadId = database.ref().child('messages').push().key;
                         messageThread = {
                             userId: currentOrder.userId,
-                            userEmail: currentOrder.userEmail,
-                            userName: currentOrder.userName,
+                            userEmail: currentOrder.userEmail || 'no-email@example.com',
+                            userName: currentOrder.userName || 'Customer',
                             subject: `Order #${currentOrder.id.substring(0, 8)}: ${messageSubject}`,
                             orderId: currentOrder.id,
                             createdAt: Date.now(),
@@ -1997,13 +2000,15 @@
                     }
                     
                     // Also add message to user's messages
-                    updates[`users/${currentOrder.userId}/messages/${messageThreadId}_${newMessageKey}`] = {
-                        type: messageType,
-                        title: `Order #${currentOrder.id.substring(0, 8)}: ${messageSubject}`,
-                        message: messageContent,
-                        timestamp: Date.now(),
-                        isRead: false
-                    };
+                    if (currentOrder.userId) {
+                        updates[`users/${currentOrder.userId}/messages/${messageThreadId}_${newMessageKey}`] = {
+                            type: messageType,
+                            title: `Order #${currentOrder.id.substring(0, 8)}: ${messageSubject}`,
+                            message: messageContent,
+                            timestamp: Date.now(),
+                            isRead: false
+                        };
+                    }
                     
                     return database.ref().update(updates);
                 })
@@ -2014,6 +2019,7 @@
                 })
                 .catch(error => {
                     alert('Error sending message: ' + error.message);
+                    console.error('Error details:', error);
                 });
         }
         
