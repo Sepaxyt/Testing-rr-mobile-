@@ -282,11 +282,10 @@
             <i class="fas fa-arrow-left"></i> Back
         </a>
         <h1 class="page-title">My Orders</h1>
-        <div></div> <!-- Empty div for alignment -->
+        <div></div>
     </div>
     
     <div id="ordersContainer">
-        <!-- Orders will be loaded here -->
         <div class="no-orders" id="noOrders">
             <i class="fas fa-box-open"></i>
             <h3>No Orders Yet</h3>
@@ -294,13 +293,11 @@
         </div>
     </div>
     
-    <!-- Toast Notification -->
     <div id="toast" class="toast">
         <i id="toastIcon"></i>
         <span id="toastMessage"></span>
     </div>
     
-    <!-- Footer Navigation -->
     <div class="footer-nav">
         <div class="nav-item" id="footerHome">
             <i class="fas fa-home"></i>
@@ -323,8 +320,7 @@
             <span>Account</span>
         </div>
     </div>
-    
-    <!-- Firebase SDK -->
+
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
@@ -347,23 +343,16 @@
         const auth = firebase.auth();
         const database = firebase.database();
         
-        // DOM Elements
+        // Telegram configuration
+        const telegramBotToken = '8059039278:AAFC-fy4GUsgil2EwHxEclwzR8H02SEqvak';
+        const telegramChatId = '6690653192';
+        
+        // DOM elements
         const ordersContainer = document.getElementById('ordersContainer');
         const noOrders = document.getElementById('noOrders');
         const toast = document.getElementById('toast');
         const toastIcon = document.getElementById('toastIcon');
         const toastMessage = document.getElementById('toastMessage');
-        
-        // Navigation elements
-        const footerHome = document.getElementById('footerHome');
-        const footerSearch = document.getElementById('footerSearch');
-        const footerOrders = document.getElementById('footerOrders');
-        const footerWishlist = document.getElementById('footerWishlist');
-        const footerAccount = document.getElementById('footerAccount');
-        
-        // Telegram configuration
-        const telegramBotToken = '8059039278:AAFC-fy4GUsgil2EwHxEclwzR8H02SEqvak';
-        const telegramChatId = '6690653192';
         
         // Check authentication and load orders
         auth.onAuthStateChanged((user) => {
@@ -379,7 +368,6 @@
             toast.className = 'toast';
             toastIcon.className = '';
             
-            // Set icon and style based on type
             switch(type) {
                 case 'success':
                     toastIcon.className = 'fas fa-check-circle';
@@ -400,7 +388,6 @@
             toastMessage.textContent = message;
             toast.classList.add('show');
             
-            // Hide after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
@@ -417,178 +404,128 @@
                     const order = childSnapshot.val();
                     order.id = childSnapshot.key;
                     
-                    // Create order card
-                    const orderCard = document.createElement('div');
-                    orderCard.className = 'order-card';
-                    
-                    // Format date
-                    const orderDate = new Date(order.createdAt);
-                    const formattedDate = orderDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    // Status class
-                    let statusClass = 'status-pending';
-                    if (order.status === 'delivered') {
-                        statusClass = 'status-delivered';
-                    } else if (order.status === 'cancelled') {
-                        statusClass = 'status-cancelled';
-                    }
-                    
-                    // Build products list
-                    let productsList = '';
-                    if (order.items) {
-                        // Multiple items order
-                        order.items.forEach(item => {
-                            productsList += `
-                                <div class="order-product">
-                                    <div class="product-image">
-                                        <img src="${item.productImage}" alt="${item.productTitle}">
-                                    </div>
-                                    <div class="product-info">
-                                        <div class="product-name">${item.productTitle}</div>
-                                        <div class="product-price">₹${item.price}</div>
-                                        <div class="product-quantity">Qty: ${item.quantity}</div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        // Single item order (backward compatibility)
-                        productsList = `
-                            <div class="order-product">
-                                <div class="product-image">
-                                    <img src="${order.productImage}" alt="${order.productTitle}">
-                                </div>
-                                <div class="product-info">
-                                    <div class="product-name">${order.productTitle}</div>
-                                    <div class="product-price">₹${order.price}</div>
-                                    <div class="product-quantity">Qty: ${order.quantity}</div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    orderCard.innerHTML = `
-                        <div class="order-header">
-                            <div>
-                                <div class="order-id">Order #${order.id.substring(0, 8)}</div>
-                                <div class="order-date">${formattedDate}</div>
-                            </div>
-                            <div class="order-status ${statusClass}">${order.status}</div>
-                        </div>
-                        ${productsList}
-                        <div class="order-footer">
-                            <div class="order-total">Total: ₹${order.total.toLocaleString('en-IN')}</div>
-                            <div class="order-actions">
-                                ${order.status === 'pending' ? `<button class="btn btn-danger" data-order-id="${order.id}">Cancel</button>` : ''}
-                                <button class="btn btn-outline" data-order-id="${order.id}">Details</button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    ordersContainer.appendChild(orderCard);
-                });
-                
-                // Add event listeners to buttons
-                document.querySelectorAll('.btn-danger').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const orderId = e.target.getAttribute('data-order-id');
-                        cancelOrder(orderId);
-                    });
-                });
-                
-                document.querySelectorAll('.btn-outline').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const orderId = e.target.getAttribute('data-order-id');
-                        viewOrderDetails(orderId);
-                    });
+                    createOrderCard(order);
                 });
             });
         }
         
-        // Cancel order
-        function cancelOrder(orderId) {
-            if (confirm('Are you sure you want to cancel this order?')) {
-                database.ref('orders/' + orderId).once('value')
-                    .then(snapshot => {
-                        const order = snapshot.val();
-                        
-                        // Update order status
-                        database.ref('orders/' + orderId).update({
-                            status: 'cancelled',
-                            cancelledAt: firebase.database.ServerValue.TIMESTAMP
-                        })
-                        .then(() => {
-                            showToast('Order cancelled successfully', 'success');
-                            
-                            // Send Telegram notification
-                            sendTelegramCancellationNotification(order, orderId);
-                            
-                            // Create admin notification
-                            createAdminNotification(order, orderId);
-                            
-                            // Add cancellation to user's order history
-                            addCancellationToUserHistory(order, orderId);
-                        })
-                        .catch((error) => {
-                            showToast('Error cancelling order', 'error');
-                        });
-                    });
+        // Create order card HTML
+        function createOrderCard(order) {
+            const orderCard = document.createElement('div');
+            orderCard.className = 'order-card';
+            
+            const orderDate = new Date(order.createdAt);
+            const formattedDate = orderDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            let statusClass = 'status-pending';
+            if (order.status === 'delivered') {
+                statusClass = 'status-delivered';
+            } else if (order.status === 'cancelled') {
+                statusClass = 'status-cancelled';
+            }
+            
+            let productsList = '';
+            if (order.items) {
+                order.items.forEach(item => {
+                    productsList += `
+                        <div class="order-product">
+                            <div class="product-image">
+                                <img src="${item.productImage}" alt="${item.productTitle}">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">${item.productTitle}</div>
+                                <div class="product-price">₹${item.price}</div>
+                                <div class="product-quantity">Qty: ${item.quantity}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                productsList = `
+                    <div class="order-product">
+                        <div class="product-image">
+                            <img src="${order.productImage}" alt="${order.productTitle}">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${order.productTitle}</div>
+                            <div class="product-price">₹${order.price}</div>
+                            <div class="product-quantity">Qty: ${order.quantity}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            orderCard.innerHTML = `
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Order #${order.id.substring(0, 8)}</div>
+                        <div class="order-date">${formattedDate}</div>
+                    </div>
+                    <div class="order-status ${statusClass}">${order.status}</div>
+                </div>
+                ${productsList}
+                <div class="order-footer">
+                    <div class="order-total">Total: ₹${order.total.toLocaleString('en-IN')}</div>
+                    <div class="order-actions">
+                        ${order.status === 'pending' ? `<button class="btn btn-danger" data-order-id="${order.id}">Cancel</button>` : ''}
+                        <button class="btn btn-outline" data-order-id="${order.id}">Details</button>
+                    </div>
+                </div>
+            `;
+            
+            ordersContainer.appendChild(orderCard);
+            
+            // Add event listeners
+            const cancelBtn = orderCard.querySelector('.btn-danger');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => cancelOrder(order.id));
+            }
+            
+            orderCard.querySelector('.btn-outline').addEventListener('click', () => {
+                viewOrderDetails(order.id);
+            });
+        }
+        
+        // Cancel order function
+        async function cancelOrder(orderId) {
+            if (!confirm('Are you sure you want to cancel this order?')) return;
+            
+            try {
+                // Get order data
+                const orderSnapshot = await database.ref('orders/' + orderId).once('value');
+                const order = orderSnapshot.val();
+                if (!order) throw new Error('Order not found');
+                
+                // Update order status
+                await database.ref('orders/' + orderId).update({
+                    status: 'cancelled',
+                    cancelledAt: firebase.database.ServerValue.TIMESTAMP
+                });
+                
+                // Send Telegram notification
+                await sendTelegramNotification(order, orderId);
+                
+                // Create admin notification
+                await createAdminNotification(order, orderId);
+                
+                // Update user's order history
+                await updateUserOrderHistory(order, orderId);
+                
+                showToast('Order cancelled successfully', 'success');
+            } catch (error) {
+                console.error('Error cancelling order:', error);
+                showToast('Error cancelling order', 'error');
             }
         }
         
-        // Create admin notification
-        function createAdminNotification(order, orderId) {
-            const notificationId = database.ref().child('adminNotifications').push().key;
-            const userId = auth.currentUser.uid;
-            
-            const notificationData = {
-                id: notificationId,
-                type: 'order_cancelled',
-                orderId: orderId,
-                userId: userId,
-                message: `Order #${orderId.substring(0, 8)} has been cancelled by the customer`,
-                timestamp: firebase.database.ServerValue.TIMESTAMP,
-                read: false
-            };
-            
-            database.ref('adminNotifications/' + notificationId).set(notificationData)
-                .then(() => {
-                    console.log('Admin notification created');
-                })
-                .catch(error => {
-                    console.error('Error creating admin notification:', error);
-                });
-        }
-        
-        // Add cancellation to user's history
-        function addCancellationToUserHistory(order, orderId) {
-            const userId = auth.currentUser.uid;
-            const timestamp = firebase.database.ServerValue.TIMESTAMP;
-            
-            const cancellationData = {
-                orderId: orderId,
-                timestamp: timestamp,
-                status: 'cancelled',
-                reason: 'Cancelled by customer'
-            };
-            
-            database.ref(`users/${userId}/orderHistory/${orderId}`).update(cancellationData)
-                .then(() => {
-                    console.log('Cancellation added to user history');
-                })
-                .catch(error => {
-                    console.error('Error adding cancellation to user history:', error);
-                });
-        }
-        
-        // Send Telegram notification for cancelled order
-        function sendTelegramCancellationNotification(order, orderId) {
+        // Send Telegram notification
+        async function sendTelegramNotification(order, orderId) {
             const orderDate = new Date(order.createdAt).toLocaleString('en-IN', {
                 day: '2-digit',
                 month: '2-digit',
@@ -598,15 +535,12 @@
                 second: '2-digit'
             });
             
-            // Build products list
             let productsList = '';
             if (order.items) {
-                // Multiple items order
                 order.items.forEach(item => {
                     productsList += `- ${item.productTitle} (Qty: ${item.quantity}, ₹${item.price})\n`;
                 });
             } else {
-                // Single item order
                 productsList = `- ${order.productTitle} (Qty: ${order.quantity}, ₹${order.price})\n`;
             }
             
@@ -623,19 +557,88 @@ Phone: ${order.customerPhone}
 🕒 Order placed at: ${orderDate}
 🆔 Order ID: ${orderId}`;
             
-            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: telegramChatId,
-                    text: message
-                })
-            })
-            .then(response => response.json())
-            .then(data => console.log('Telegram cancellation notification sent:', data))
-            .catch(error => console.error('Error sending Telegram cancellation notification:', error));
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: telegramChatId,
+                        text: message
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Telegram API error');
+                }
+                
+                console.log('Telegram notification sent');
+            } catch (error) {
+                console.error('Error sending Telegram notification:', error);
+                throw error;
+            }
+        }
+        
+        // Create admin notification
+        async function createAdminNotification(order, orderId) {
+            try {
+                const notificationId = database.ref().child('adminNotifications').push().key;
+                const userId = auth.currentUser.uid;
+                
+                const notificationData = {
+                    id: notificationId,
+                    type: 'order_cancelled',
+                    orderId: orderId,
+                    userId: userId,
+                    userName: order.customerName,
+                    userEmail: order.customerEmail,
+                    message: `Order #${orderId.substring(0, 8)} has been cancelled by the customer`,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    read: false,
+                    orderData: {
+                        total: order.total,
+                        products: order.items || [{
+                            productTitle: order.productTitle,
+                            price: order.price,
+                            quantity: order.quantity
+                        }]
+                    }
+                };
+                
+                await database.ref('adminNotifications/' + notificationId).set(notificationData);
+                console.log('Admin notification created');
+            } catch (error) {
+                console.error('Error creating admin notification:', error);
+                throw error;
+            }
+        }
+        
+        // Update user's order history
+        async function updateUserOrderHistory(order, orderId) {
+            try {
+                const userId = auth.currentUser.uid;
+                const timestamp = firebase.database.ServerValue.TIMESTAMP;
+                
+                const historyData = {
+                    orderId: orderId,
+                    timestamp: timestamp,
+                    status: 'cancelled',
+                    action: 'customer_cancelled',
+                    totalAmount: order.total,
+                    products: order.items || [{
+                        productTitle: order.productTitle,
+                        price: order.price,
+                        quantity: order.quantity
+                    }]
+                };
+                
+                await database.ref(`users/${userId}/orderHistory/${orderId}`).update(historyData);
+                console.log('User order history updated');
+            } catch (error) {
+                console.error('Error updating user order history:', error);
+                throw error;
+            }
         }
         
         // View order details
@@ -644,23 +647,23 @@ Phone: ${order.customerPhone}
         }
         
         // Setup navigation
-        footerHome.addEventListener('click', () => {
+        document.getElementById('footerHome').addEventListener('click', () => {
             window.location.href = 'main.html';
         });
         
-        footerSearch.addEventListener('click', () => {
+        document.getElementById('footerSearch').addEventListener('click', () => {
             window.location.href = 'search.html';
         });
         
-        footerOrders.addEventListener('click', () => {
+        document.getElementById('footerOrders').addEventListener('click', () => {
             window.location.href = 'orders.html';
         });
         
-        footerWishlist.addEventListener('click', () => {
+        document.getElementById('footerWishlist').addEventListener('click', () => {
             window.location.href = 'wishlist.html';
         });
         
-        footerAccount.addEventListener('click', () => {
+        document.getElementById('footerAccount').addEventListener('click', () => {
             window.location.href = 'profile.html';
         });
     </script>
