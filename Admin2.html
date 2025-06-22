@@ -1944,84 +1944,79 @@
         }
         
         // Send order message to user
-        function sendOrderMessage() {
-            const messageType = document.getElementById('messageType').value;
-            const messageSubject = document.getElementById('messageSubject').value;
-            const messageContent = document.getElementById('orderMessageContent').value;
-            
-            if (!messageType || !messageSubject || !messageContent || !currentOrder) {
-                alert('Please fill all fields');
-                return;
+        // Send order message to user - Fixed Version
+function sendOrderMessage() {
+    const messageType = document.getElementById('messageType').value;
+    const messageSubject = document.getElementById('messageSubject').value;
+    const messageContent = document.getElementById('orderMessageContent').value;
+    
+    if (!messageType || !messageSubject || !messageContent || !currentOrder) {
+        alert('Please fill all required fields');
+        return;
+    }
+
+    // Check if message thread exists for this order
+    database.ref('messages').orderByChild('orderId').equalTo(currentOrder.id).once('value')
+        .then((snapshot) => {
+            let messageThreadId;
+            let isNewThread = false;
+            const updates = {};
+
+            if (snapshot.exists()) {
+                // Use existing thread
+                const data = snapshot.val();
+                messageThreadId = Object.keys(data)[0];
+            } else {
+                // Create new thread
+                messageThreadId = database.ref().child('messages').push().key;
+                isNewThread = true;
+                
+                // Add thread data
+                updates[`messages/${messageThreadId}`] = {
+                    userId: currentOrder.userId,
+                    userEmail: currentOrder.userEmail || 'no-email@example.com',
+                    userName: currentOrder.userName || 'Customer',
+                    subject: `Order #${currentOrder.id.substring(0, 8)}: ${messageSubject}`,
+                    orderId: currentOrder.id,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                };
             }
-            
-            // Check if message thread already exists for this order
-            database.ref('messages').orderByChild('orderId').equalTo(currentOrder.id).once('value')
-                .then((snapshot) => {
-                    let messageThreadId;
-                    let messageThread;
-                    
-                    if (snapshot.exists()) {
-                        // Use existing thread
-                        const data = snapshot.val();
-                        messageThreadId = Object.keys(data)[0];
-                        messageThread = data[messageThreadId];
-                    } else {
-                        // Create new thread
-                        messageThreadId = database.ref().child('messages').push().key;
-                        messageThread = {
-                            userId: currentOrder.userId,
-                            userEmail: currentOrder.userEmail || 'no-email@example.com',
-                            userName: currentOrder.userName || 'Customer',
-                            subject: `Order #${currentOrder.id.substring(0, 8)}: ${messageSubject}`,
-                            orderId: currentOrder.id,
-                            createdAt: Date.now(),
-                            updatedAt: Date.now(),
-                            messages: {}
-                        };
-                    }
-                    
-                    // Add new message
-                    const newMessageKey = database.ref().child('messages').push().key;
-                    const messageData = {
-                        type: messageType,
-                        content: messageContent,
-                        timestamp: Date.now(),
-                        isAdminReply: true,
-                        status: 'read'
-                    };
-                    
-                    const updates = {};
-                    updates[`messages/${messageThreadId}/messages/${newMessageKey}`] = messageData;
-                    updates[`messages/${messageThreadId}/updatedAt`] = Date.now();
-                    
-                    // If new thread, add all thread data
-                    if (!snapshot.exists()) {
-                        updates[`messages/${messageThreadId}`] = messageThread;
-                    }
-                    
-                    // Also add message to user's messages
-                    if (currentOrder.userId) {
-                        updates[`users/${currentOrder.userId}/messages/${messageThreadId}_${newMessageKey}`] = {
-                            type: messageType,
-                            title: `Order #${currentOrder.id.substring(0, 8)}: ${messageSubject}`,
-                            message: messageContent,
-                            timestamp: Date.now(),
-                            isRead: false
-                        };
-                    }
-                    
-                    return database.ref().update(updates);
-                })
-                .then(() => {
-                    alert('Message sent successfully!');
-                    orderMessageModal.classList.remove('active');
-                    orderMessageForm.reset();
-                })
-                .catch(error => {
-                    alert('Error sending message: ' + error.message);
-                    console.error('Error details:', error);
-                });
-        }
+
+            // Add new message
+            const newMessageKey = database.ref().child('messages').push().key;
+            updates[`messages/${messageThreadId}/messages/${newMessageKey}`] = {
+                type: messageType,
+                content: messageContent,
+                timestamp: Date.now(),
+                isAdminReply: true,
+                status: 'read'
+            };
+            updates[`messages/${messageThreadId}/updatedAt`] = Date.now();
+
+            // Add to user's messages if user exists
+            if (currentOrder.userId) {
+                updates[`users/${currentOrder.userId}/messages/${messageThreadId}_${newMessageKey}`] = {
+                    type: messageType,
+                    title: `Order #${currentOrder.id.substring(0, 8)}: ${messageSubject}`,
+                    message: messageContent,
+                    timestamp: Date.now(),
+                    isRead: false
+                };
+            }
+
+            return database.ref().update(updates);
+        })
+        .then(() => {
+            alert('Message sent successfully!');
+            orderMessageModal.classList.remove('active');
+            orderMessageForm.reset();
+        })
+        .catch(error => {
+            console.error('Message sending error:', error);
+            alert('Error sending message: ' + error.message);
+        });
+}
         
         // Export data to CSV
         function exportToCSV(data, fileName) {
