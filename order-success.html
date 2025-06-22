@@ -14,6 +14,7 @@
             --dark: #1a1a2e;
             --light: #f8f9fa;
             --success: #4cc9f0;
+            --danger: #f72585;
         }
         
         * {
@@ -159,9 +160,24 @@
             color: var(--primary);
         }
         
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
+        }
+        
+        .profile-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: left;
         }
         
         footer {
@@ -207,34 +223,8 @@
         </div>
     </header>
     
-    <div class="success-container">
-        <div class="success-icon">
-            <i class="fas fa-check"></i>
-        </div>
-        
-        <h1 class="success-title">Order Successful!</h1>
-        <p class="success-message">Thank you for your purchase. Your order has been received and is being processed.</p>
-        
-        <div class="order-details">
-            <div class="order-id">Order #<span id="orderId">123456</span></div>
-            <div class="detail-row">
-                <span class="detail-label">Date:</span>
-                <span class="detail-value" id="orderDate">May 15, 2023</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Total:</span>
-                <span class="detail-value" id="orderTotal">₹5,999.00</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Payment Method:</span>
-                <span class="detail-value" id="paymentMethod">Cash on Delivery</span>
-            </div>
-        </div>
-        
-        <div class="action-buttons">
-            <a href="main.html" class="btn btn-primary">Continue Shopping</a>
-            <a href="orders.html" class="btn btn-outline">View Orders</a>
-        </div>
+    <div class="success-container" id="successContainer">
+        <!-- This will be dynamically populated based on profile status -->
     </div>
     
     <footer>
@@ -272,47 +262,149 @@
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const database = firebase.database();
         
         // Telegram configuration
         const telegramBotToken = '8059039278:AAFC-fy4GUsgil2EwHxEclwzR8H02SEqvak';
         const telegramChatId = '6690653192';
         
-        // Load order details and send notifications
-        function loadOrderDetails() {
+        // Check profile completion and load appropriate UI
+        function checkProfileAndLoadUI() {
             const urlParams = new URLSearchParams(window.location.search);
             const orderId = urlParams.get('orderId');
+            const userId = auth.currentUser?.uid;
             
-            if (orderId) {
-                database.ref('orders/' + orderId).once('value')
-                    .then((snapshot) => {
-                        const order = snapshot.val();
-                        if (order) {
-                            // Update UI
-                            document.getElementById('orderId').textContent = orderId.substring(0, 8);
-                            document.getElementById('orderTotal').textContent = `₹${order.total.toLocaleString('en-IN')}`;
-                            document.getElementById('paymentMethod').textContent = order.paymentMethod;
-                            
-                            // Format date
-                            const orderDate = new Date(order.createdAt);
-                            document.getElementById('orderDate').textContent = orderDate.toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-
-                            // Send notifications
-                            sendTelegramNotification(order, orderId);
-                            sendEmailNotification(order, orderId);
-                        }
-                    });
+            if (!userId) {
+                window.location.href = 'login.html?redirect=order-success.html?orderId=' + orderId;
+                return;
             }
+            
+            // Check if profile is complete
+            database.ref('users/' + userId).once('value')
+                .then((snapshot) => {
+                    const userData = snapshot.val();
+                    const successContainer = document.getElementById('successContainer');
+                    
+                    // Required profile fields
+                    const requiredFields = ['name', 'phone', 'address', 'city', 'pincode'];
+                    const isProfileComplete = userData && requiredFields.every(field => userData[field]);
+                    
+                    if (isProfileComplete) {
+                        // Profile is complete - show order success
+                        showOrderSuccess(orderId, userData);
+                    } else {
+                        // Profile is incomplete - show warning and redirect to profile
+                        showProfileWarning(orderId);
+                    }
+                });
+        }
+        
+        // Show order success UI
+        function showOrderSuccess(orderId, userData) {
+            const successContainer = document.getElementById('successContainer');
+            
+            // Create success UI
+            successContainer.innerHTML = `
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                
+                <h1 class="success-title">Order Successful!</h1>
+                <p class="success-message">Thank you for your purchase. Your order has been received and is being processed.</p>
+                
+                <div class="order-details">
+                    <div class="order-id">Order #<span id="orderId">${orderId.substring(0, 8)}</span></div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date:</span>
+                        <span class="detail-value" id="orderDate">${new Date().toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Total:</span>
+                        <span class="detail-value" id="orderTotal">Loading...</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Payment Method:</span>
+                        <span class="detail-value" id="paymentMethod">Loading...</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="main.html" class="btn btn-primary">Continue Shopping</a>
+                    <a href="orders.html" class="btn btn-outline">View Orders</a>
+                </div>
+            `;
+            
+            // Load order details and send notifications
+            loadOrderDetails(orderId, userData);
+        }
+        
+        // Show profile warning UI
+        function showProfileWarning(orderId) {
+            const successContainer = document.getElementById('successContainer');
+            
+            successContainer.innerHTML = `
+                <div class="success-icon" style="background: var(--danger);">
+                    <i class="fas fa-exclamation"></i>
+                </div>
+                
+                <h1 class="success-title">Profile Incomplete!</h1>
+                <p class="success-message">Before we can process your order, please complete your profile information.</p>
+                
+                <div class="profile-warning">
+                    <h3>Required Information:</h3>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Full Name</li>
+                        <li>Phone Number</li>
+                        <li>Complete Address</li>
+                        <li>City</li>
+                        <li>Pincode</li>
+                    </ul>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="profile.html?redirect=order-success.html?orderId=${orderId}" class="btn btn-primary">Complete Profile Now</a>
+                    <a href="main.html" class="btn btn-outline">Cancel Order</a>
+                </div>
+            `;
+        }
+        
+        // Load order details and send notifications
+        function loadOrderDetails(orderId, userData) {
+            database.ref('orders/' + orderId).once('value')
+                .then((snapshot) => {
+                    const order = snapshot.val();
+                    if (order) {
+                        // Update UI
+                        document.getElementById('orderId').textContent = orderId.substring(0, 8);
+                        document.getElementById('orderTotal').textContent = `₹${order.total.toLocaleString('en-IN')}`;
+                        document.getElementById('paymentMethod').textContent = order.paymentMethod;
+                        
+                        // Format date
+                        const orderDate = new Date(order.createdAt);
+                        document.getElementById('orderDate').textContent = orderDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        // Send notifications only if profile is complete
+                        sendTelegramNotification(order, orderId, userData);
+                        sendEmailNotification(order, orderId, userData);
+                    }
+                });
         }
         
         // Send Telegram notification
-        function sendTelegramNotification(order, orderId) {
+        function sendTelegramNotification(order, orderId, userData) {
             const orderDate = new Date(order.createdAt).toLocaleString('en-IN', {
                 day: '2-digit',
                 month: '2-digit',
@@ -341,14 +433,14 @@ ${productsList}
 Total: ₹${order.total}
 
 👤 Customer Details:
-Name: ${order.customerName}
-Phone: ${order.customerPhone}
-Email: ${order.customerEmail}
+Name: ${userData.name}
+Phone: ${userData.phone}
+Email: ${userData.email || auth.currentUser.email}
 
 🏠 Delivery Address:
-${order.shippingAddress}
-${order.city}, ${order.state} - ${order.pincode}
-Landmark: ${order.landmark}
+${userData.address}
+${userData.city}, ${userData.state} - ${userData.pincode}
+Landmark: ${userData.landmark || 'N/A'}
 
 🕒 Order placed at: ${orderDate}
 🆔 Order ID: ${orderId}`;
@@ -369,7 +461,7 @@ Landmark: ${order.landmark}
         }
         
         // Send Email notification
-        function sendEmailNotification(order, orderId) {
+        function sendEmailNotification(order, orderId, userData) {
             const orderDate = new Date(order.createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -380,13 +472,13 @@ Landmark: ${order.landmark}
             
             // Prepare email parameters
             const emailParams = {
-                to_email: order.customerEmail,
-                to_name: order.customerName,
+                to_email: userData.email || auth.currentUser.email,
+                to_name: userData.name,
                 order_id: orderId,
                 order_date: orderDate,
                 order_total: `₹${order.total.toLocaleString('en-IN')}`,
                 payment_method: order.paymentMethod,
-                delivery_address: `${order.shippingAddress}, ${order.city}, ${order.state} - ${order.pincode}`,
+                delivery_address: `${userData.address}, ${userData.city}, ${userData.state} - ${userData.pincode}`,
                 products: ''
             };
             
@@ -412,7 +504,16 @@ Landmark: ${order.landmark}
         
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
-            loadOrderDetails();
+            auth.onAuthStateChanged((user) => {
+                if (!user) {
+                    // Redirect to login with return URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const orderId = urlParams.get('orderId');
+                    window.location.href = 'login.html?redirect=order-success.html?orderId=' + orderId;
+                } else {
+                    checkProfileAndLoadUI();
+                }
+            });
         });
     </script>
 </body>
