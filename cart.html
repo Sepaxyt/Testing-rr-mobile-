@@ -397,7 +397,7 @@
                                     <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</div>
                                     <div class="quantity-control">
                                         <div class="quantity-btn minus" onclick="updateQuantity('${item.id}', -1)">-</div>
-                                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" id="quantity-${item.id}">
+                                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" id="quantity-${item.id}" onchange="manualQuantityUpdate('${item.id}', this.value)">
                                         <div class="quantity-btn plus" onclick="updateQuantity('${item.id}', 1)">+</div>
                                     </div>
                                 </div>
@@ -435,6 +435,20 @@
                 const quantityInput = document.getElementById(`quantity-${itemId}`);
                 let newQuantity = parseInt(quantityInput.value) + change;
                 
+                if (newQuantity < 1) newQuantity = 1;
+                
+                database.ref('carts/' + user.uid + '/items/' + itemId).update({
+                    quantity: newQuantity
+                });
+            }
+        }
+        
+        // Manual quantity update
+        function manualQuantityUpdate(itemId, value) {
+            const user = auth.currentUser;
+            if (user) {
+                let newQuantity = parseInt(value);
+                if (isNaN(newQuantity)) newQuantity = 1;
                 if (newQuantity < 1) newQuantity = 1;
                 
                 database.ref('carts/' + user.uid + '/items/' + itemId).update({
